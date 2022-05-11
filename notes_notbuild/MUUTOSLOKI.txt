@@ -1,0 +1,87 @@
+Kirjataan t‰nne koodiin tehdyt muutokset, jotta muutokset olisivat j‰ljitett‰viss‰:
+
+020321 (JR):
+~ 60 rivilt‰ alkaen:
+- muutoksia mgpr_train -funktion argumentteihin
+- loogisuustarkastuksia ja listamuotoinen inputti kernel hparametreille.
+- erillinen argumentti kernelin valinnalle
+- poistin normalisointi-argumentin, koska se on syyt‰ olla aina p‰‰ll‰.
+
+~190 rivilt‰ alkaen: 
+- matern 32 -kernelin sigma-parametri
+- RBF kernel function
+
+- Tehty tarvittavat muutokset mgpr_summary-functioon (rbf & matern32).
+
+
+
+030321 (PP):
+mgpr_summary --> summary
+mgpr_predict --> predict 
+
+030321 (JR):
+mgpr_train() --> mgpr()
+predict()-funktioon tarvittavat default argumentit, jos missing()==TRUE. Tarkemmat tarkastukset tehd‰‰n metodeissa.
+kfold predict()-funktion sis‰‰n, sis‰lt‰‰ paljon muokkauksia. Argumentti kfold, jossa 0 = ei CV ja >0 = kfold/loocv. 
+Mm. ehtorakenne predict()-funktiossa: valitaan kutsutaanko predict.mgpr() vaiko kfold.mgpr()
+
+040321 (JR):
+covout-argumentti predict():ss‰. Jos TRUE, palautetaan lista. Samoin jos computeCI = TRUE, palautetaan lista.
+Jos sek‰ covout ett‰ computeCI ovat FALSE, palautetaan pelk‰st‰‰n ennusteet vektorissa.
+
+090321 (PV):
+- RBF k‰ytt‰m‰‰n sigmaa ja korrelaatiopituutta Maternin tapaan
+- Matern 1/2 (Ornstein-Uhlenbeck) ja Matern 5/2 kernelien lis‰‰minen
+- Kerneliparametrien tsekkausten yksinkertaistus kun kaikissa on nyt samat 
+
+090321 (JR):
+- Argumentti negatiivisten ennusteiden fiksaukselle. Ks. testikoodista.
+
+100321 (JR):
+- Korjattu yksi bugi liittyen newdata:n rivinimien/rivinumeroiden tallentamiseen (jos k‰ytt‰j‰ syˆtt‰‰ data.framena)
+- kfold-ongelma ratkaistu. mgpr-funktio hyv‰ksyy yhden salaparametrin: normalize (FALSE/TRUE). Predict.mgpr-funktio
+  katsoo malliobjektista (trainMeanSd), ett‰ onko normalisointia tehty treenivaiheessa. 
+- Yhten‰istin funktioiden argumenttien nime‰mist‰ (poistin KaMeLiN seL‰T)
+
+140321 (JR):
+- Kommenttien poistaminen/p‰ivitt‰minen.
+
+TODO: Huomasin pienen ongelman meanfunc-argumentin kanssa. # Korjattu 190421; Ei ole mahdollista syˆtt‰‰ omaa funktiota en‰‰.
+
+T‰ll‰ hetkell‰ on mahdollista, ett‰ k‰ytt‰j‰ syˆtt‰‰ oman mean function (funktiossa mallin sovitus ja ennustus uuteen dataan), 
+mutta toteutus on huono (dataa tallennetaan globenviin). Ominaisuuden voisi oikeastaan poistaa, koska ei kovin selke‰ k‰ytt‰‰.
+
+# 190421 (JR):
+- Funktiot R-paketin kansiorakenteessa: "MGPR_dev/Rpaketti/MGPR_rlib/"
+- Korjasin bugit liittyen covout- ja credint-argumenttien toimintaan kfold-moodissa.
+
+210421 (PV):
+- Korjattu negatiiviselle menevien intervallien korjaus: a) tehd‰‰n nyt vain kun fixneg=T, b) tekee nyt mit‰ pit‰‰ muillakin kuin 95% v‰leill‰.
+ 
+250421 & 280421 (JR):
+- Argumenttien k‰sittelyt.
+- Bugeja kfold-funktiossa. Korjattu ongelma, joka ilmeni kun credinter == TRUE.
+- Bugi newdatax-ennustuksessa korjattu. Bugi aiheutti sen, ett‰ yhdelle havainnolle ei ollut mahdollista ennustaa.
+
+160222 (PV)
+- Uskottavuusv‰lit korjattu kun sigma != 1.
+
+- Lis‰tty parametrien optimointi (sigma, corlen, errorvar), defaulttina p‰‰ll‰ kun k‰ytt‰j‰ ei anna kernpar:ia tai kernpar = "auto". Lis‰tty optimoinnin kontrollilista inputtiin.
+
+- Errorvar siirretty kernpar-listaan.
+
+- meanf siirretty predictist‰ p‰‰funktioon, koska vaikuttaa parametrioptimointiin.
+
+- Muokattu p‰‰funktion kovarianssifunktioita parametrioptimointia varten: et‰isyysmatriisi lasketaan erikseen, jolloin sit‰ ei tarvitse tehd‰ joka iteraatiossa uudelleen. Haittapuolena muistink‰yttˆ kasvaa.
+
+- kfold_mgpr ei laske en‰‰ koulutusdatan kerneli‰ uusiksi, foldin matriisit muodostetaan osittamalla koulutusdatan matriisit.
+
+- Lis‰tty seed-arvo kfold_mgpr:‰‰n, jotta foldit saa pysym‰‰n samoina tarvittaessa.
+
+- Poistettu newdatan muuttujien varianssien tarkistus predictist‰ tarpeettomana.
+
+- Muutettu lineaarisen keskiarvofunktion nimi kuvaavammaksi "linear".
+
+- Lis‰tty "avg" keskiarvofunktio, eli koulutusdatan keskiarvo.
+
+- Predict vektorisoitu melko pitk‰lle, vie nyt enemm‰n muistia mutta paljon nopeampi.
