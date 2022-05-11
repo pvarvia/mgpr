@@ -1,0 +1,15 @@
+#' MGPR demodata
+#' 
+#' A dataset comprises 830 field plots collected from the Kurikka inventory area that is located in Finland. The dataset includes three observed forest attributes: volume (m3/ha), mean height (m) and mean diameter (cm).
+#' There are also 32 features extracted for field plots from airborne laser scanning (ALS) data. The features are calculated separately for last and first echoes (f and l).
+#' Height features are: standard deviation (hstd), mean (hmean), skewness (hskew), percentiles (h10, h30, ...,h90 for 10 %, 30%, ..., 90%) and densities using fixed height thresholds 0.5 m, 2 m, and 5 m (d0.5, d2 and d5).
+#' Intensity features are: percentiles (h10, h30, ...,h90 for 10 %, 30%, ..., 90%)
+#' The Kurikka inventory area is one of the operational inventory blocks used for remote sensing-based forest management inventories in Finland. 
+#' The field plots (kaukokartoituskoealat) collected by Finnish forest centre are openly available at: https://www.metsakeskus.fi/fi/avoin-metsa-ja-luontotieto/metsatietoaineistot/metsavaratiedot
+#' The low-density ALS data provided by the National Land Survey of Finland are openly available at: https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p
+#'
+#' @name mgprdata
+#' @docType data
+#' @author 
+#' @usage data(mgprdata)
+NULL
