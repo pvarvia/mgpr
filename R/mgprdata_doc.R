@@ -1,6 +1,6 @@
 #' MGPR demodata
 #' 
-#' A dataset comprises 830 field plots collected from the Kurikka inventory area that is located in Finland. The dataset includes three observed forest attributes: volume (m3/ha), mean height (m) and mean diameter (cm).
+#' A dataset comprises 830 field plots collected from the  inventory area that is located in Finland. The dataset includes three observed forest attributes: volume (m3/ha), mean height (m) and mean diameter (cm).
 #' There are also 32 features extracted for field plots from airborne laser scanning (ALS) data. The features are calculated separately for last and first echoes (f and l).
 #' Height features are: standard deviation (hstd), mean (hmean), skewness (hskew), percentiles (h10, h30, ...,h90 for 10 %, 30%, ..., 90%) and densities using fixed height thresholds 0.5 m, 2 m, and 5 m (d0.5, d2 and d5).
 #' Intensity features are: percentiles (h10, h30, ...,h90 for 10 %, 30%, ..., 90%)
