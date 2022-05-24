@@ -18,6 +18,11 @@ citation("mgpr")
 Dataset for the demonstration of area-based forest inventory with the mgpr library.
 The mgprdata comprises 825 circular field plots (r = 9 m) located in the Finnish boreal forests. 
 For each field plot, there are ? plot-level features calculated from the airborne laser scanning (ALS) data.
+
+The mgprdata is a part of the forest inventory data used for remote sensing-based forest management inventories in Finland. 
+The acquisition of the field data (kaukokartoituskoealat) is operated by Finnish forest centre. \cr\cr
+The field data are openly available at: https://www.metsakeskus.fi/fi/avoin-metsa-ja-luontotieto/metsatietoaineistot/metsavaratiedot
+The low-density ALS data belongs to the open data of the National Land Survey of Finland: https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p 
 ```r
 data(mgprdata)
 ```  
@@ -27,7 +32,6 @@ data(mgprdata)
 The *mgpr* function is used to fit a Multivariate Gaussian Process Regression model.
 
 ```r
-data(mgprdata)
 gp0 <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29],
 kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 ```   
