@@ -1,9 +1,5 @@
 # Multivariate Gaussian Process Regression; MGPR library
 
-###################
-# Version 17/02/2021
-###################
-
 # Implementation is based on Varvia et al. 2019 in TGRS
 # doi: 10.1109/TGRS.2018.2883495
 
@@ -18,7 +14,6 @@
 #   require(p, character.only = TRUE)
 # }
 # #########################################
-# usePackage("nloptr")
 # usePackage("Matrix")
 # usePackage("optimization")
 # ##########################################
@@ -86,7 +81,6 @@
 #'   datay = mgprdata[, 1:5], datax = mgprdata[, 6:29],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
-#' @import nloptr
 #' @import Matrix
 #' @import optimization
 #' @export
@@ -757,13 +751,13 @@ predict.mgpr <- function(mgpr,
     stop("User-defined kernel is not supported in this version.")
   }
   ##############################################
-  # Objective and gradient for optimization (AUGLAG)
-  trungprobj_AUGLAG <- function(x) {
+  # Objective and gradient for optimization
+  trungprobj <- function(x) {
     # negative log-likelihood
     p <- sum((iLx %*% (x - mx))^2)
     return(p)
   }
-  trungprgrad_AUGLAG <- function(x) {
+  trungprgrad <- function(x) {
     # gradient required
     dp <- 2 * t(iLx) %*% (iLx %*% (x - mx))
     return(dp)
@@ -887,18 +881,18 @@ predict.mgpr <- function(mgpr,
         mx <- meanpreds_tar[, targetplot]
         iLx <- iLtc
         # optimization does not accept initial values x0 < lb
-        # replace negs with 0
+        # replace negs with 0.1
         x00 <- meanpreds_tar[, targetplot]
-        x00[x00 < 0] <- 0
-        # Augmented Lagrangian Algorithm
-        meanpreds_tar[, targetplot] <- auglag(
-          x0 = x00, fn = trungprobj_AUGLAG,
-          gr = trungprgrad_AUGLAG,
+        x00[x00 < 0] <- 0.1
+        # optimize using L-BFGS-B
+        meanpreds_tar[, targetplot] <- optim(
+          x0 = x00, fn = trungprobj,
+          gr = trungprgrad,
           lower = array(rep(0, nx),
             dim = c(1, nx)
           ),
           upper = btrun,
-          localsolver = "LBFGS"
+          method = "L-BFGS-B"
         )$par
       }
     }
