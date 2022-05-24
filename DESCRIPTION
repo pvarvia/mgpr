@@ -1,17 +1,16 @@
-Package: MGPR
+Package: mgpr
 Type: Package
-Title: MGPR: An R package for multivariate Gaussian process regression
-Description: This R library is used to perform Multivariate Gaussian Process Regression (MGPR) that is a non-linear and non-parametric machine learning approach. This package allows to train an MGPR model and predict using the trained MGPR model to new data. A k-fold cross validation procedure is also implemented.
+Title: mgpr: An R library for multivariate Gaussian process regression
+Description: The mgpr library is used to perform Multivariate Gaussian Process Regression (mgpr). The package allows to train an mgpr model and predict using the trained mgpr model to new data. A k-fold cross validation procedure is also implemented.
 Version: 0.0.3
 Date: 2022-20-02
-Imports: nloptr, Matrix, optimization
+Imports: Matrix, optimization
 Authors@R: c(person("Varvia", "Petri", email = "petri.varvia@uef.fi",
-  role = c("aut")),
-  person("R\U00E4ty", "Janne", email = "janne.raty@nibio.no",
+  role = c("aut", "cre")),
+  person("R\U00E4ty", "Janne", email = "janne.raty1@gmail.com",
   role = c("aut", "cre")),
   person("Packalen", "Petteri", email = "petteri.packalen@uef.fi",
-  role = c("aut")))
-Maintainer: Janne R\U00E4ty <janne.raty@nibio.no>
+  role = c("aut", "cre")))
 URL: https://artikkelidoi.org
 License: TBA
 RoxygenNote: 7.1.2
