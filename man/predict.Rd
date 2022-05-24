@@ -2,7 +2,7 @@
 % Please edit documentation in R/MGPR110322.R
 \name{predict}
 \alias{predict}
-\title{Predict method for MGPR model}
+\title{Predict function for an mgpr model}
 \usage{
 predict(
   mgpr,
@@ -44,7 +44,7 @@ Returns predicted values. If credible intervals/covariance matrix
 is/are requested, the output will be a list.
 }
 \description{
-Predict using a Multivariate Gaussian process regression (MGPR) model. The
+Predict using a Multivariate Gaussian process regression (mgpr) model. The
 function supports k-fold cross validation, new predictor variables, limiting
 predictions to positive scale, and generation of credible intervals.
 }

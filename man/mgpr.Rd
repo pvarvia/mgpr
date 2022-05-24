@@ -2,7 +2,7 @@
 % Please edit documentation in R/MGPR110322.R
 \name{mgpr}
 \alias{mgpr}
-\title{Fitting a MGPR model}
+\title{Fitting an mgpr model}
 \usage{
 mgpr(
   datay,

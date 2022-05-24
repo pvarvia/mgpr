@@ -4,7 +4,7 @@
 \encoding{UTF-8}
 \name{mgprdata}
 \alias{mgprdata}
-\title{Dataset for the demonstration of area-based forest inventory with MGPR}
+\title{Dataset for the demonstration of area-based forest inventory with mgpr}
 \usage{
 data(mgprdata)
 }
@@ -24,9 +24,8 @@ Features: \tabular{llllll}{
   \code{hmean} \tab \tab Mean of ALS-based height measurements. \cr
   \code{hskew} \tab \tab Skewness of the distribution of the ALS-based height measurements. \cr
   \code{h10, h30, ..., h90} \tab \tab Percentiles calculated based on the distribution of the ALS-based height measurements.  \cr
-  \code{d0.05, d2, d10, d15} \tab \tab Density features calculated based on the distribution of the ALS-based height measurements.
-  Fixed height thresholds (0.5 m, 2 m, etc.) were used.  \cr
-  \code{int10, int30, ..., int90} \tab \tab Percentiles calculated based on the ALS-based intesity measurements. \cr
+  \code{dX} \tab \tab Density features calculated based on the distribution of the ALS-based height measurements with a fixed X height threshold.
+  For example, f_d2 means the proportion of first echoes below 2 m to all first echoes.  \cr
 }
 
 The features were calculated separately for the last and first echoes (f and l).

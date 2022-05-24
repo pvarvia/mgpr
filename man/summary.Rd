@@ -2,7 +2,7 @@
 % Please edit documentation in R/MGPR110322.R
 \name{summary}
 \alias{summary}
-\title{Summarizing MGPR model}
+\title{Summarizing an mgpr model}
 \usage{
 summary(mgpr)
 }
@@ -10,7 +10,7 @@ summary(mgpr)
 \item{mgpr}{a \code{mgpr} model object, usually, a result of a call to \code{\link{mgpr}}.}
 }
 \value{
-A summary of the MGPR model will be printed to the R console.
+A summary of the mgpr model will be printed to the R console.
 }
 \description{
 \code{summary} method for class "\code{mgpr}".
