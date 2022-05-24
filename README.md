@@ -13,9 +13,18 @@ citation("mgpr")
 
 # Key functionalities
 
-### Fitting an MGPR model
+### Demo data
 
-*mgpr* is used to fit a Multivariate Gaussian Process Regression model.
+Dataset for the demonstration of area-based forest inventory with the mgpr library.
+The mgprdata comprises 825 circular field plots (r = 9 m) located in the Finnish boreal forests. 
+For each field plot, there are ? plot-level features calculated from the airborne laser scanning (ALS) data.
+```r
+data(mgprdata)
+```  
+
+### Fitting an mgpr model
+
+The *mgpr* function is used to fit a Multivariate Gaussian Process Regression model.
 
 ```r
 data(mgprdata)
@@ -24,21 +33,17 @@ kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 ```   
 
 ### Predict method for an mgpr model
-Predict using an mgpr model. 
-The function supports k-fold cross validation, new predictor variables, limiting predictions to positive scale, and generation of credible intervals.
+The *predict* function is used to predict using an mgpr model. 
+The *predict* function supports k-fold cross validation, new predictor variables, limiting predictions to positive scale, and generation of credible intervals.
 ```r
 gp0_pred <- predict(gp0, credinter = 0.95)
 ```   
 
 ### Summarizing an mgpr model
 
-*summary* method for class "mgpr".
+The *summary* function for class "mgpr".
 
 ```r
 summary(gp0)
 ```  
 
-### Demo data
-```r
-data(mgprdata)
-```  
