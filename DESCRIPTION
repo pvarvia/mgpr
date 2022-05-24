@@ -8,9 +8,9 @@ Imports: Matrix, optimization
 Authors@R: c(person("Varvia", "Petri", email = "petri.varvia@uef.fi",
   role = c("aut", "cre")),
   person("R\U00E4ty", "Janne", email = "janne.raty1@gmail.com",
-  role = c("aut", "cre")),
+  role = c("aut")),
   person("Packalen", "Petteri", email = "petteri.packalen@uef.fi",
-  role = c("aut", "cre")))
+  role = c("aut")))
 URL: https://artikkelidoi.org
 License: TBA
 RoxygenNote: 7.1.2
