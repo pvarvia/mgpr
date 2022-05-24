@@ -1,0 +1,10 @@
+citHeader("To cite the mgpr library use:")
+
+citEntry(entry="Article",
+         author = "Petri Varvia and Janne Räty and Petteri Packalen",
+         title = "mgpr: An R package for multivariate gaussian process regression",
+         journal = "SoftwareX",
+         volume = "xxx",
+         year = "2022",
+         doi = "TBA"
+)
