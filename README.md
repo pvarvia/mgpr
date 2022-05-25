@@ -22,9 +22,9 @@ For each field plot, there are ? plot-level features calculated from the airborn
 The *mgprdata* is a part of the forest inventory data used for remote sensing-based forest management inventories in Finland. 
 The acquisition of the field data (kaukokartoituskoealat/inventointikoealat) is operated by Finnish forest centre.
 
-The field data belongs to [the open data of the Finnish forest centre](https://www.metsakeskus.fi/fi/avoin-metsa-ja-luontotieto/metsatietoaineistot/metsavaratiedot).
+The field data belong to [the open data of the Finnish forest centre](https://www.metsakeskus.fi/fi/avoin-metsa-ja-luontotieto/metsatietoaineistot/metsavaratiedot).
 
-The low-density ALS data belongs to [the open data of the National Land Survey of Finland](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p). 
+The low-density ALS data belong to [the open data of the National Land Survey of Finland](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p). 
 
 ```r
 data(mgprdata)
