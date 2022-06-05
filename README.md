@@ -17,7 +17,7 @@ citation("mgpr")
 
 The *mgprdata* is used for the demonstration of area-based forest inventory with the mgpr library.
 The *mgprdata* comprises 825 circular field plots located in the Finnish boreal forests. 
-For each field plot, there are ? plot-level features calculated from the airborne laser scanning (ALS) data.
+For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data.
 
 The *mgprdata* is a part of the forest inventory data used for remote sensing-based forest management inventories in Finland. 
 The acquisition of the field data (kaukokartoituskoealat/inventointikoealat) is operated by Finnish forest centre.
@@ -55,7 +55,7 @@ summary(gp0)
 ```  
 
 # BLAS/LAPACK
-add...
+The core functionalities of "mgpr" use highly vectorized operations. Thus, we recommend the use of high-performance linear algebra libraries (e.g. Intel oneMKL) linked to R. ...
 
 # Related publications
 

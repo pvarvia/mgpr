@@ -10,7 +10,7 @@ data(mgprdata)
 }
 \description{
 The mgprdata comprises 825 circular field plots (r = 9 m) located in the Finnish boreal forests. 
-For each field plot, there are 38 plot-level features calculated from the airborne laser scanning (ALS) data.
+For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data.
 }
 \details{
 Observed variables: \tabular{lll}{
@@ -51,7 +51,4 @@ The acquisition of the field data (kaukokartoituskoealat) is operated by Finnish
 The field data are openly available at: https://www.metsakeskus.fi/fi/avoin-metsa-ja-luontotieto/metsatietoaineistot/metsavaratiedot
 \cr\cr
 The low-density ALS data provided by the National Land Survey of Finland are openly available at: https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p
-}
-\author{
-
 }
