@@ -1,4 +1,4 @@
-init_meanf <- function(meanftype,mgpr) {
+init_meanf <- function(meanftype,mgpr,verbose) {
   
   if (!(identical(meanftype, "zero") ||
         identical(meanftype, "avg") ||
@@ -10,7 +10,7 @@ init_meanf <- function(meanftype,mgpr) {
   }
   
   if (!is.function(meanftype)) {
-    nx <- dim(t(mgpr$trainy))[1]
+    nx <- dim(mgpr$trainy)[2]
     
     # Zero mean
     if (identical(meanftype, "zero")) {
@@ -51,7 +51,7 @@ init_meanf <- function(meanftype,mgpr) {
           fill = TRUE
           )
         }
-        Acm <- try(Cxz %*% chol2inv(chol(Cz + 1e-8 * diag(mn))))
+        Acm <- try(Cxz %*% chol2inv(chol(Cz + 1e-8 * diag(dim(mgpr$trainx)[2]))))
       }
       rm(mgpr)
       meanf <- function(x) {
