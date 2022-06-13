@@ -138,7 +138,6 @@ mgpr <- function(datay,
     ))
   }
   
-
   # Kernel parameters
   if (!is.null(kernpar$corlen)) {
     if (is.numeric(kernpar$corlen) &
@@ -174,14 +173,6 @@ mgpr <- function(datay,
     errorvar <- NULL
   }
 
-  if (!(identical(meanf, "zero") ||
-        identical(meanf, "avg") ||
-        identical(meanf, "linear"))) {
-    stop(paste0(
-      "Error: Invalid meanf argument. ",
-      "Type 'zero', 'avg', or 'linear'"
-    ))
-  }
   # Parameter optimization settings
   optimpar_user <- optimpar
   optimpar <- list(
@@ -272,34 +263,9 @@ mgpr <- function(datay,
   # sizes
   n_train <- dim(train_X)[2]
   ##############################################
-  # Define covariance functions
-  if (identical(kernel, "matern12")) {
-    # Matern 1/2 a.k.a Ornstein-Uhlenbeck
-    # d = distance
-    covfunc <- function(d, ksigma, corlen) {
-      ksigma^2 * exp(-d / corlen)
-    }
-  } else if (identical(kernel, "matern32")) {
-    # Matern 3/2
-    covfunc <- function(d, ksigma, corlen) {
-      ksigma^2 * (1 + sqrt(3) *
-        d / corlen) * exp(-sqrt(3) * d / corlen)
-    }
-  } else if (identical(kernel, "matern52")) {
-    # Matern 5/2
-    covfunc <- function(d, ksigma, corlen) {
-      ksigma^2 * (1 + sqrt(5) *
-        d / corlen + 5 * (d^2) / (3 * corlen^2)) *
-        exp(-sqrt(5) * d / corlen)
-    }
-  } else if (identical(kernel, "rbf")) {
-    # RBF, Gaussian kernel, Squared exponential
-    covfunc <- function(d, ksigma, corlen) {
-      ksigma^2 * exp(-(d^2) / (2 * corlen^2))
-    }
-  } else {
-    stop("User-defined kernel is not supported in this version.")
-  }
+  # Initialize covariance function
+  
+  covfunc <- init_covf(kernel)
 
   # Distance matrix D
   D <- t(apply(train_X, 2, FUN = function(x) sqrt(colSums((train_X - x)^2))))
@@ -312,31 +278,29 @@ mgpr <- function(datay,
 
   ##############################################
   # Return structure initialization
-  if (identical(kernel, "matern12") || identical(kernel, "matern32") ||
-    identical(kernel, "matern52") || identical(kernel, "rbf")) {
-    return_list <- list(
-      "trainy" = t(train_Y),
-      "trainx" = t(train_X),
-      "trainMeanSd" = mean_sd_train,
-      "Cy" = Cy,
-      "E" = NULL,
-      "Ie" = Ie,
-      "K" = NULL,
-      "kernel" = kernel,
-      "sigma" = ksigma,
-      "corlen" = corlen,
-      "errorvar" = errorvar,
-      "meanf" = meanf,
-      "XColName" = col_namex,
-      "YColName" = col_namey,
-      "XRowName" = row_namex
-    )
-  } else {
-    stop("Error. Invalid kernel.")
-  }
+  return_list <- list(
+    "trainy" = t(train_Y),
+    "trainx" = t(train_X),
+    "trainMeanSd" = mean_sd_train,
+    "Cy" = Cy,
+    "E" = NULL,
+    "Ie" = Ie,
+    "K" = NULL,
+    "covfunc" = covfunc,
+    "sigma" = ksigma,
+    "corlen" = corlen,
+    "errorvar" = errorvar,
+    "meanf" = NULL,
+    "XColName" = col_namex,
+    "YColName" = col_namey,
+    "XRowName" = row_namex
+  )
   class(return_list) <- c("mgpr")
-
-
+  
+  # Add mean function
+  return_list$meanf <- init_meanf(meanf,return_list)
+  
+  
   ##############################################
   # Hyperparameter optimization
   # the kernel parameters that are set to NULL will be estimated
@@ -434,11 +398,11 @@ summary.mgpr <- function(mgpr) {
     dim(mgpr$trainx)[2],
     " predictor variables\n", dim(mgpr$trainy)[2], " response variables",
     "\n\n", "Kernel parameters:",
-    "\n", "Kernel function:", mgpr$kernel,
+    "\n", "Kernel function:", environment(mgpr[["covfunc"]])[["covftype"]],
     "\n", "Sigma: ", mgpr$sigma,
     "\n", "Correlation length: ", mgpr$corlen,
     "\n", "Error variance:", mgpr$errorvar,
-    "\n", "Mean function: ", mgpr$meanf, "\n"
+    "\n", "Mean function: ", environment(mgpr[["meanf"]])[["meanftype"]], "\n"
   )
 }
 
@@ -625,16 +589,10 @@ predict.mgpr <- function(mgpr,
     }
   }
 
-  if (identical(mgpr$kernel, "matern12") ||
-    identical(mgpr$kernel, "matern32") ||
-    identical(mgpr$kernel, "matern52") ||
-    identical(mgpr$kernel, "rbf")) {
-    # Get kernel parameters
-    corlen <- mgpr$corlen # correlation length
-    ksigma <- mgpr$sigma
-  } else {
-    stop("invalid kernel.")
-  }
+  # Get kernel parameters
+  corlen <- mgpr$corlen # correlation length
+  ksigma <- mgpr$sigma
+  
   # Get noise variance
   errorvar <- mgpr$errorvar
 
@@ -664,86 +622,7 @@ predict.mgpr <- function(mgpr,
   }
 
   nx <- dim(t(mgpr$trainy))[1] # number of attributes
-  ##############################################
-  # Define mean functions: three built-in alternatives (zero, avg and linear)
-  meanf <- mgpr$meanf
-  if (!is.function(meanf)) {
-    # Zero mean
-    if (identical(meanf, "zero")) {
-      meanf <- function(x) {
-        # Return
-        return(rep(0, nx))
-      }
-    } else if (identical(meanf, "avg")) { # sample average of training data
-      mux <- t(apply(mgpr$trainy, MARGIN = 2, FUN = mean))
-      meanf <- function(x) {
-        # Return
-        return(mux)
-      }
-    } else if (identical(meanf, "linear")) { # linear estimates
-      # No need for special cases for single response case since
-      # the format is always ok in mgpr object
-      mux <- t(apply(mgpr$trainy, MARGIN = 2, FUN = mean))
-      Ccmf <- cov(cbind(mgpr$trainx, mgpr$trainy))
-      muz <- t(apply(mgpr$trainx, MARGIN = 2, FUN = mean))
-      Cxz <- t(Ccmf[
-        1:(nrow(Ccmf) - (nx)),
-        (ncol(Ccmf) - (nx - 1)):ncol(Ccmf)
-      ])
-      Cz <- Ccmf[1:(nrow(Ccmf) - nx), 1:(ncol(Ccmf) - nx)]
-      # Cz should be at least psd, solve using Cholesky
-      Acm <- try(Cxz %*% chol2inv(chol(Cz)), silent = TRUE)
-      if (identical(class(Acm), "try-error")) {
-        if (verbose) {
-          cat(paste0(
-            "Warning: Do you have highly correlated features? ",
-            "System is computationally singular. Using",
-            " regularized inverse of Cz matrix.",
-            "Using the linear mean function."
-          ),
-          fill = TRUE
-          )
-        }
-        Acm <- try(Cxz %*% chol2inv(chol(Cz + 1e-8 * diag(mn))))
-      }
-      meanf <- function(x) {
-        # Return
-        return(mux + t(Acm %*% array(x - muz, dim = c(length(x), 1))))
-      }
-    }
-  } else {
-    stop("Error: User-defined mean function is not supported in this version.")
-  }
 
-  ##############################################
-  # Define covariance functions
-  if (identical(mgpr$kernel, "matern12")) {
-    # Matern 1/2 a.k.a Ornstein-Uhlenbeck
-    # d = distance
-    covfunc <- function(d) {
-      ksigma^2 * exp(-d / corlen)
-    }
-  } else if (identical(mgpr$kernel, "matern32")) {
-    # Matern 3/2
-    covfunc <- function(d) {
-      ksigma^2 * (1 + sqrt(3) *
-        d / corlen) * exp(-sqrt(3) * d / corlen)
-    }
-  } else if (identical(mgpr$kernel, "matern52")) {
-    # Matern 5/2
-    covfunc <- function(d) {
-      ksigma^2 * (1 + sqrt(5) *
-        d / corlen + 5 * (d^2) / (3 * corlen^2)) *
-        exp(-sqrt(5) * d / corlen)
-    }
-  } else if (identical(mgpr$kernel, "rbf")) {
-    # RBF, Gaussian kernel, Squared exponential
-    covfunc <- function(d) {
-      ksigma^2 * exp(-(d^2) / (2 * corlen^2))
-    }
-  } else {
-    stop("User-defined kernel is not supported in this version.")
-  }
   ##############################################
   # Objective and gradient for optimization
   trungprobj <- function(x) {
@@ -757,7 +636,7 @@ predict.mgpr <- function(mgpr,
     return(dp)
   }
   # Compute prior expectancy for training data
-  mu_Y <- apply(Traindatax, 2, FUN = function(x) meanf(x))
+  mu_Y <- apply(Traindatax, 2, FUN = mgpr$meanf)
 
   ##############################################
   # Matrices used in the prediction.
@@ -767,11 +646,11 @@ predict.mgpr <- function(mgpr,
   } else { # only one predictor
     d <- t(apply(t(as.array(Targetdatax)), 2, FUN = function(x) sqrt(colSums((Traindatax - x)^2))))
   }
-  Kstar <- covfunc(d)
+  Kstar <- mgpr$covfunc(d, ksigma, corlen)
   if (!is.null(dim(Targetdatax))) {
-    mu_Target <- apply(Targetdatax, 2, FUN = function(x) meanf(x))
+    mu_Target <- apply(Targetdatax, 2, FUN = mgpr$meanf)
   } else { # only one predictor
-    mu_Target <- apply(t(as.array(Targetdatax)), 2, FUN = function(x) meanf(x))
+    mu_Target <- apply(t(as.array(Targetdatax)), 2, FUN = mgpr$meanf)
   }
 
   # univariate case allows simplifications
@@ -800,7 +679,7 @@ predict.mgpr <- function(mgpr,
     # sigma value for the credible intervals
     cisig <- qnorm(credinter + (1 - credinter) / 2)
 
-    Kstarstar <- covfunc(0) * mgpr$Cy + mgpr$E
+    Kstarstar <- mgpr$covfunc(0, ksigma, corlen) * mgpr$Cy + mgpr$E
     for (targetplot in 1:n_target) {
       # indices to target plot rows
       inds <- (seq(targetplot, nx * n_target, n_target))
