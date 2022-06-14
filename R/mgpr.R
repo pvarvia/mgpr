@@ -869,7 +869,7 @@ predict.mgpr <- function(mgpr,
         x00[x00 < 0] <- 0.1
         # optimize using L-BFGS-B
         meanpreds_tar[, targetplot] <- optim(
-          x0 = x00, fn = trungprobj,
+          par = x00, fn = trungprobj,
           gr = trungprgrad,
           lower = array(rep(0, nx),
             dim = c(1, nx)
