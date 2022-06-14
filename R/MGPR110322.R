@@ -1,4 +1,4 @@
-# Multivariate Gaussian Process Regression; MGPR library
+# Multivariate Gaussian Process Regression; the mgpr library
 
 # Implementation is based on Varvia et al. 2019 in TGRS
 # doi: 10.1109/TGRS.2018.2883495
@@ -6,19 +6,8 @@
 # R code: Janne Raty, Petteri Packalen, Petri Varvia
 
 #########################################
-# # R packages (dependencies)
-# usePackage <- function(p) {
-#   if (!is.element(p, installed.packages()[, 1])) {
-#     install.packages(p, dep = TRUE)
-#   }
-#   require(p, character.only = TRUE)
-# }
-# #########################################
-# usePackage("Matrix")
-# usePackage("optimization")
-# ##########################################
 
-#' Fitting a MGPR model
+#' Fitting an mgpr model
 #'
 #' \code{mgpr} is used to fit a Multivariate Gaussian Process Regression model.
 #' @param datay a data frame or an object coercible by as.data.frame to a
@@ -414,11 +403,11 @@ mgpr <- function(datay,
   return(return_list)
 }
 
-#' Summarizing MGPR model
+#' Summarizing an mgpr model
 #'
 #' \code{summary} method for class "\code{mgpr}".
 #' @param mgpr a \code{mgpr} model object, usually, a result of a call to \code{\link{mgpr}}.
-#' @return A summary of the MGPR model will be printed to the R console.
+#' @return A summary of the mgpr model will be printed to the R console.
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
@@ -449,9 +438,9 @@ summary.mgpr <- function(mgpr) {
 }
 
 
-#' Predict method for MGPR model
+#' Predict function for an mgpr model
 #'
-#' Predict using a Multivariate Gaussian process regression (MGPR) model. The
+#' Predict using a Multivariate Gaussian process regression (mgpr) model. The
 #' function supports k-fold cross validation, new predictor variables, limiting
 #' predictions to positive scale, and generation of credible intervals.
 #' @param mgpr a \code{mgpr} model object, usually, a result of a call to
