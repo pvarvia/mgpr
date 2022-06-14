@@ -24,7 +24,6 @@ test_x <-  mgprdata[1:50, 5:29]
 test_y <-  mgprdata[1:50, 2:4]
 
 test_mgpr <- function(dy, dx, manustep = TRUE) {
-manustep <- TRUE
 
 # Performance assessment function. Inputs are data.frames
 # having corresponding columns with matching column names.
@@ -131,19 +130,24 @@ tryCatch({m_t2_3 <- mgpr(datay = dy, datax = dx, kernel = "matern32",
 cat("\nInvalid meanf: ", fill = TRUE)
 cat("\n", fill =TRUE)
 tryCatch({m_t2_4 <- mgpr(datay = dy, datax = dx, kernel = "matern32",
-                         kernpar = list(corlen = 5, sigma = 1), meanf = 1)})
+                         kernpar = list(corlen = 5, sigma = 1), meanf = 1)},
+         error = function(e) print(e))
 tryCatch({m_t2_5 <- mgpr(datay = dy, datax = dx, kernel = "matern32",
-                         kernpar = list(corlen = 5, sigma = 1), meanf = "xac")}) 
+                         kernpar = list(corlen = 5, sigma = 1), meanf = "xac")},
+         error = function(e) print(e)) 
 
 cat("\nValid mean functions: ", fill = TRUE)
 cat("\n", fill =TRUE)
 tryCatch({m_t2_6 <- mgpr(datay = dy, datax = dx, kernel = "matern32",
-                         kernpar = list(corlen = 5, sigma = 1), meanf = "zero")}) # works
+                         kernpar = list(corlen = 5, sigma = 1), meanf = "zero")},
+         error = function(e) print(e)) # works
 tryCatch({summary(m_t2_6)})
 cat("\n", fill =TRUE)
 tryCatch({m_t2_7 <- mgpr(datay = dy, datax = dx, kernel = "matern32",
-                         kernpar = list(corlen = 5, sigma = 1), meanf = "linear")}) # works
-tryCatch({summary(m_t2_7)})
+                         kernpar = list(corlen = 5, sigma = 1), meanf = "linear")},
+         error = function(e) print(e)) # works
+tryCatch({summary(m_t2_7)},
+         error = function(e) print(e))
 
 if (manustep) {
   readline(prompt = "\nDoes it look good? Press [enter] to continue")
@@ -182,7 +186,7 @@ if (manustep) {
 }
 
 # Test fixneg argument
-cat("\nPost-process negative predictions (should not give errors): ", 
+cat("\nPost-processing of negative predictions (should not give errors): ", 
     fill = TRUE)
 dy_neg <- dy
 dy_neg[, 1:2] <- dy_neg[, 1:2] - 10
@@ -205,6 +209,7 @@ if (manustep) {
 # include also credible intervals
 cat("\nCheck credible intervals (should not give errors): ", 
     fill = TRUE)
+cat("\n", fill = TRUE)
 tryCatch({pred_lcv_ci <- predict(m_t2_1, verbose = F, kfold = 10, credinter = 0.95)},
          error = function(e) print(e))
 tryCatch({pred_loocv_ci <- predict(m_t2_1, verbose = F, kfold = nrow(dx), credinter = 0.95)},
@@ -212,9 +217,12 @@ tryCatch({pred_loocv_ci <- predict(m_t2_1, verbose = F, kfold = nrow(dx), credin
 cat("Compare results from Kfold and LOOCV: ", fill = TRUE)
 print(validate(pred_lcv_ci$pred, dy))
 print(validate(pred_loocv_ci$pred, dy))
+
+cat("\n", fill = TRUE)
 print(head(pred_lcv_ci$credinter)) # lets see credible intervals
 print(head(pred_loocv_ci$credinter)) # lets see credible intervals
-cat("\nCheck negative credible intervals (fixneg = FALSE versus fixneg = TRUE): ")
+cat("\nCheck negative credible intervals (fixneg = FALSE versus fixneg = TRUE): ", fill = TRUE)
+cat("\n", fill = TRUE)
 tryCatch(pred_lcv_ci_neg <- predict(m_t1_1_neg, verbose = F, kfold = 10, credinter = 0.95))
 tryCatch(pred_lcv_ci_negfix <- predict(m_t1_1_neg, verbose = F, kfold = 10, credinter = 0.95, fixneg = TRUE))
 print(head(pred_lcv_ci_neg$credinter)) # lets see credible intervals
@@ -226,8 +234,9 @@ if (manustep) {
 }
 
 # predictions with and without credible intervals should be equal
-cat("\nCheck that predictions are similar with and without CI mode:")
-if (mean(pred_m_t2_1_loocv == pred_loocv_ci) == 1) {
+cat("\nCheck that predictions are similar with and without the CI mode:")
+if (mean(pred_m_t2_1_loocv == pred_loocv_ci$pred) == 1) {
+  cat("\n", fill = TRUE)
   cat("Predictions OK.", fill = TRUE)
 } else {
   stop("Error. Predictions are dissimilar.")
@@ -235,23 +244,32 @@ if (mean(pred_m_t2_1_loocv == pred_loocv_ci) == 1) {
 
 # inputs as vectors; unimode
 cat("\nTesting vector input for response (univariate):", fill = TRUE)
-tryCatch(m_t1_s <- mgpr( as.numeric(dy[, 1]), dx ))
-tryCatch(pred_s1 <- predict( m_t1_s, verbose = F))
+cat("\n", fill = TRUE)
+tryCatch({m_t1_s <- mgpr( as.numeric(dy[, 1]), dx )},
+         error = function(e) print(e))
+tryCatch({pred_s1 <- predict( m_t1_s, verbose = F)},
+         error = function(e) print(e))
 print(summary(m_t1_s))
-print(validate( pred_s1[,1], dy[,1] ))
+cat("\n", fill = TRUE)
+print(validate(pred_s1[,1], dy[,1]))
 
 if (manustep) {
   readline(prompt = "Does it look good? Press [enter] to continue")
 }
 
 # one response and one predictor: train & predict
-cat("\nTesting vector input for response and predictor variable" , fill = TRUE)
-tryCatch( m_t1_s_s <- mgpr( as.numeric(dy[,1]), dx[,1]) )
-tryCatch( pred_s_s1 <- predict( m_t1_s_s, verbose=F ))
-tryCatch( pred_s_s2 <- predict( m_t1_s_s, verbose=Fc, kfold = 10))
-print(summary( m_t1_s_s1 ))
-print(validate( pred_s_s1[,1], dy[,1] ))
-print(validate( pred_s_s2[,1], dy[,1] ))
+cat("\nTesting vector input for both response and predictor variable" , fill = TRUE)
+tryCatch( {m_t1_s_s <- mgpr( as.numeric(dy[, 1]), dx[, 1])},
+          error = function(e) print(e))
+tryCatch( {pred_s_s1 <- predict( m_t1_s_s, verbose=F)},
+          error = function(e) print(e))
+tryCatch( {pred_s_s2 <- predict( m_t1_s_s, verbose=F, kfold = 10)},
+          error = function(e) print(e))
+cat("\n", fill = TRUE)
+print(summary(m_t1_s_s))
+cat("\nPerformance assessment, train mode and kfold:", fill = TRUE)
+print(validate(pred_s_s1[, 1], dy[, 1]))
+print(validate(pred_s_s2[, 1], dy[, 1]))
 
 
 cat("\nTesting if NAs in the response data: " , fill = TRUE)
@@ -261,7 +279,7 @@ tryCatch({m_na_t <- mgpr(datay = dy_na, datax = dx, kernel = "matern32",
                          kernpar = list())},
          error = function(e) print(e)) 
 
-cat("Testing if NAs in the predictor variable data: " , fill = TRUE)
+cat("Testing if NAs in the predictor variable data (should give errors: " , fill = TRUE)
 dx_na <- dx
 dx_na[sample(1, nrow(dy), 3), 2] <- NA
 tryCatch({m_dxna_t <- mgpr(datay = dy, datax = dx_na, kernel = "matern32",
