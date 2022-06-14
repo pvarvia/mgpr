@@ -17,12 +17,12 @@
 #' data frame containing the predictor variables (columns) for each observation
 #' (rows). It is recommended to use row and column names.
 #' @param kernel a name of the kernel function.
-#' Alternatives: "\code{matern12}", "\code{matern32}", "\code{matern52}", and
-#' "\code{rbf}". A user must always define the kernel function.
+#' Alternatives: "\code{matern12}", "\code{matern32}" (default), "\code{matern52}", and
+#' "\code{rbf}".
 #' @param kernpar kernel hyperparameters sigma, correlation length and noise variance
 #' (nugget) given as a list.
 #' Kernel hyperparameters not set by the user are estimated using the training set.
-#' @param meanf mean function, choices: "\code{zero}", "\code{avg}", "\code{linear}".
+#' @param meanf mean function, choices: "\code{zero}", "\code{avg}" (default), "\code{linear}".
 #' Mean function specifies a deterministic trend in the Gaussian process and mostly
 #' affects extrapolation outside the training set. "\code{zero}" (default)
 #' assumes no trend, "\code{avg}" uses the training set mean, "\code{linear}"
@@ -75,9 +75,9 @@
 #' @export
 mgpr <- function(datay,
                  datax,
-                 kernel,
+                 kernel = "matern32",
                  kernpar = list(sigma = NULL, corlen = NULL, errorvar = NULL),
-                 meanf = "zero",
+                 meanf = "avg",
                  optimpar = list(optkfold = 5,
                                  optstart = c(1, 10, 0.1),
                                  optlower = c(0.3, 3, 0.03),
@@ -114,25 +114,19 @@ mgpr <- function(datay,
   if (!is.logical(verbose)) {
     stop("Invalid verbose argument.")
   }
-
-  if (missing(kernel)) {
+  
+  if (identical(kernel, "matern12") || identical(kernel, "matern32") ||
+      identical(kernel, "matern52") || identical(kernel, "rbf")) {
+    if (verbose) {
+      cat(paste0("Using ", kernel, " kernel function"), fill = TRUE)
+    }
+  } else {
     stop(paste0(
-      "Set the kernel function. Options:",
+      "Invalid kernel function. Options:",
       "'matern12', 'matern32', 'matern52' or 'rbf'"
     ))
-  } else {
-    if (identical(kernel, "matern12") || identical(kernel, "matern32") ||
-      identical(kernel, "matern52") || identical(kernel, "rbf")) {
-      if (verbose) {
-        cat(paste0("Using ", kernel, " kernel function"), fill = TRUE)
-      }
-    } else {
-      stop(paste0(
-        "Invalid kernel function. Options:",
-        "'matern12', 'matern32', 'matern52' or 'rbf'"
-      ))
-    }
   }
+  
 
   # Kernel parameters
   if (!is.null(kernpar$corlen)) {

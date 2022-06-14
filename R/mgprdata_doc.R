@@ -2,7 +2,7 @@
 #' 
 #' @description 
 #' The mgprdata comprises 825 circular field plots (r = 9 m) located in the Finnish boreal forests. 
-#' For each field plot, there are 38 plot-level features calculated from the airborne laser scanning (ALS) data. 
+#' For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data. 
 #' @details 
 #' Observed variables: \tabular{lll}{
 #'   \code{Volume, v} \tab \tab Observed timber volume (m3/ha). \cr
