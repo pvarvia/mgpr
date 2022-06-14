@@ -3,8 +3,6 @@
 # Implementation is based on Varvia et al. 2019 in TGRS
 # doi: 10.1109/TGRS.2018.2883495
 
-# R code: Janne Raty, Petteri Packalen, Petri Varvia
-
 #########################################
 
 #' Fitting an mgpr model
@@ -108,6 +106,40 @@ mgpr <- function(datay,
   } else {
     if (any(is.na(datay)) || any(is.na(datax))) {
       stop("Invalid data! [NA values]")
+    }
+    if (!is.vector(datay) & !is.vector(datax)) { # both df 
+      if (dim(datay)[1] != dim(datax)[1]) {
+        stop("Invalid data! [Too few training observations]")
+      }
+      
+      if (dim(datay)[1] == 1 | dim(datax)[1] == 1) {
+        stop("Invalid data! [Too few training observations]")
+      }
+
+    } else if (!is.vector(datay) & is.vector(datax)) { # y is df, x vector
+      if (dim(datay)[1] != length(datax)) {
+        stop("Invalid data! [Too few training observations]")
+      }
+      
+      if (dim(datay)[1] == 1 | length(datax) == 1) {
+        stop("Invalid data! [Too few training observations]")
+      }
+      if ((dim(datay)[1] <= dim(datay)[2]) | (length(datax) <= dim(datay)[2])) {
+        stop("Invalid data! [Too few training observations]")
+      }
+    } else if (is.vector(datay) & !is.vector(datax)) { # y vector, x df
+      if (length(datay) != dim(datax)[1]) {
+        stop("Invalid data! [Too few training observations]")
+      }
+      
+      if (length(datay) == 1 | dim(datax)[1] == 1) {
+        stop("Invalid data! [Too few training observations]")
+      }
+      
+    } else { # both vectors
+      if (length(datay) == 1 | length(datax) == 1) {
+        stop("Invalid data! [Too few training observations]")
+      }
     }
   }
 
@@ -222,7 +254,9 @@ mgpr <- function(datay,
         datax <- datax[, -rm_cols]
         stop(paste0(
           "The following predictor variables have var(x) == 0: ",
-          paste(rm_name, collapse = " ")
+          paste(rm_name, collapse = " "), " at column indices ",
+          paste(rm_cols, collapse = " "),  
+          ". Please remove them from the training data."
         ))
       }
     } else {
@@ -230,7 +264,8 @@ mgpr <- function(datay,
         datax <- datax[, -rm_cols]
         stop(paste0(
           "The following predictor variable columns have",
-          "var(x) == 0: ", paste(rm_cols, collapse = " ")
+          "var(x) == 0: ", paste(rm_cols, collapse = " "), 
+          ". Please remove them from the training data."
         ))
       }
     }
@@ -331,6 +366,9 @@ mgpr <- function(datay,
   # the kernel parameters that are set to NULL will be estimated
 
   if (is.null(ksigma) || is.null(corlen) || is.null(errorvar)) {
+    if (verbose) {
+      cat("Optimizing hyperparameters...", fill = TRUE)
+    }
     # set seed for k-fold to keep the same folds across iterations
     kfoldseed <- as.numeric(Sys.time())
 
@@ -1062,10 +1100,10 @@ kfold_mgpr <- function(mgpr, newdatax = NULL, credinter = NULL,
         remainder <- remainder - 1
       }
       if (verbose) {
-        cat("k-fold cross validation: ", chosengroup, "/ ", foldcount_user,
+        cat("k-fold cross validation: ", chosengroup, "/", foldcount_user,
           fill = TRUE
         )
-        cat("Fold number: ", chosengroup, "fold size: ", k, fill = TRUE)
+        cat("Fold number: ", chosengroup, "\nFold size: ", k, fill = TRUE)
       }
       chosenplotrows <- sample(kfold_sel, k, replace = FALSE)
       # update kfold selection, i.e. remove selected rows.
@@ -1075,7 +1113,7 @@ kfold_mgpr <- function(mgpr, newdatax = NULL, credinter = NULL,
       chosenplotrows <- chosengroup
       if (verbose) {
         if (chosengroup %% 50 == 0) {
-          cat("leave-one-out cross validation: ", chosenplotrows, "/ ", n_n,
+          cat("leave-one-out cross validation: ", chosenplotrows, "/", n_n,
             fill = TRUE
           )
         }
