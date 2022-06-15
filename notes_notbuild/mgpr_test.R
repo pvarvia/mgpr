@@ -164,34 +164,43 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   
   cat("\n#################################", fill = TRUE)
   
-  cat(paste0("\nTesting the predict function." ,
+  cat(paste0("\nTesting the predict function. " ,
              "Check manually that error rates are reasonable:"),
       fill = TRUE)
   
-  tryCatch({pred_m_t2_1_tm <- predict(m_t1_1, verbose = F, covout = F)},
+  tryCatch({pred_m_t1_1_tm <- predict(m_t1_1, verbose = F, covout = F)},
            error = function(e) print(e)) 
   
-  tryCatch({pred_m_t2_1_kfold <- predict( m_t2_1, verbose = F, kfold = 10,
+  tryCatch({pred_m_t1_1_kfold <- predict(m_t1_1, verbose = F, kfold = 10,
                                   covout = F)},
            error = function(e) print(e)) 
   
-  tryCatch({pred_m_t2_1_loocv <- predict( m_t2_1, verbose = F, kfold = nrow(dx),
+  tryCatch({pred_m_t1_1_loocv <- predict(m_t1_1, verbose = F, kfold = nrow(dx),
+                                          covout = F)},
+           error = function(e) print(e)) 
+  
+  tryCatch({pred_m_t1_1_new <- predict(m_t1_1, verbose = F, newdatax = dx,
                                           covout = F)},
            error = function(e) print(e)) 
   cat("\nTRAIN mode:", fill = TRUE)
-  print(names(pred_m_t2_1_tm))
+  print(names(pred_m_t1_1_tm))
   #print(head(pred_m_t2_1_tm$pred));print(head(pred_m_t2_1_tm$credinter))
-  print(validate(pred_m_t2_1_tm, dy))
+  print(validate(pred_m_t1_1_tm, dy))
   
   cat("\n10-fold mode:", fill = TRUE)
-  print(names(pred_m_t2_1_kfold))
+  print(names(pred_m_t1_1_kfold))
   #print(head(pred_m_t2_1_kfold$pred));print(head(pred_m_t2_1_kfold$credinter))
-  print(validate(pred_m_t2_1_kfold, dy))
+  print(validate(pred_m_t1_1_kfold, dy))
   
   cat("\nLOOCV-fold mode:", fill = TRUE)
-  print(names(pred_m_t2_1_loocv))
+  print(names(pred_m_t1_1_loocv))
   #print(head(pred_m_t2_1_kfold$pred));print(head(pred_m_t2_1_kfold$credinter))
-  print(validate(pred_m_t2_1_loocv, dy))
+  print(validate(pred_m_t1_1_loocv, dy))
+  
+  cat("\nNew data mode:", fill = TRUE)
+  print(names(pred_m_t1_1_new))
+  #print(head(pred_m_t2_1_kfold$pred));print(head(pred_m_t2_1_kfold$credinter))
+  print(validate(pred_m_t1_1_new, dy))
   
   if (manustep) {
     readline(prompt = "\nDoes it look good? Press [enter] to continue")
@@ -221,6 +230,14 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   tryCatch({print(min(predict(m_t1_1_neg, kfold = 10, verbose = FALSE, 
                               fixneg = TRUE)))},
            error = function(e) print(e)) # KFOLD
+  cat("\nFixneg == FALSE (newdata): ", fill = TRUE)
+  tryCatch({print(min(predict(m_t1_1_neg, newdatax = dx, verbose = FALSE, 
+                              fixneg = FALSE)))},
+           error = function(e) print(e)) #KFOLD
+  cat("\nFixneg == TRUE (newdata): ", fill = TRUE)
+  tryCatch({print(min(predict(m_t1_1_neg, newdatax = dx, verbose = FALSE, 
+                              fixneg = TRUE)))},
+           error = function(e) print(e)) # KFOLD
   
   if (manustep) {
     readline(prompt = "\nDoes it look good? Press [enter] to continue")
@@ -232,10 +249,10 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   cat("\nCheck manualy the credible intervals (should not give errors): ", 
       fill = TRUE)
   cat("\n", fill = TRUE)
-  tryCatch({pred_lcv_ci <- predict(m_t2_1, verbose = F, kfold = 10, 
+  tryCatch({pred_lcv_ci <- predict(m_t1_1, verbose = F, kfold = 10, 
                                    credinter = 0.95)},
            error = function(e) print(e))
-  tryCatch({pred_loocv_ci <- predict(m_t2_1, verbose = F, kfold = nrow(dx), 
+  tryCatch({pred_loocv_ci <- predict(m_t1_1, verbose = F, kfold = nrow(dx), 
                                      credinter = 0.95)},
            error = function(e) print(e))
   cat("Compare performance assessment: Kfold vs. LOOCV: ", fill = TRUE)
@@ -250,14 +267,29 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   print(head(pred_loocv_ci$credinter)) # lets see credible intervals
   
   cat("\nCheck negative credible intervals (fixneg = FALSE): ", fill = TRUE)
-  cat("\n", fill = TRUE)
+  cat("\nKFOLD mode: ", fill = TRUE)
   tryCatch(pred_lcv_ci_neg <- predict(m_t1_1_neg, verbose = F, kfold = 10, 
                                       credinter = 0.95))
   print(head(pred_lcv_ci_neg$pred))
   print(head(pred_lcv_ci_neg$credinter)) # lets see credible intervals
-  cat("\nCheck negative credible intervals (fixneg = TRUE): ", fill = TRUE)
+  
+  cat("\nNew data mode: ", fill = TRUE)
+  tryCatch(pred_lcv_ci_neg <- predict(m_t1_1_neg, verbose = F, newdatax = dx, 
+                                      credinter = 0.95))
+  print(head(pred_lcv_ci_neg$pred))
   cat("\n", fill = TRUE)
+  print(head(pred_lcv_ci_neg$credinter)) # lets see credible intervals
+  
+  cat("\nCheck negative credible intervals (fixneg = TRUE): ", fill = TRUE)
+  cat("\nKFOLD mode", fill = TRUE)
   tryCatch(pred_lcv_ci_negfix <- predict(m_t1_1_neg, verbose = F, kfold = 10, 
+                                         credinter = 0.95, fixneg = TRUE))
+  print(head(pred_lcv_ci_negfix$pred))
+  cat("\n", fill = TRUE)
+  print(head(pred_lcv_ci_negfix$credinter)) # lets see credible intervals
+  
+  cat("\nNew data mode", fill = TRUE)
+  tryCatch(pred_lcv_ci_negfix <- predict(m_t1_1_neg, verbose = F, newdatax = dx, 
                                          credinter = 0.95, fixneg = TRUE))
   print(head(pred_lcv_ci_negfix$pred))
   cat("\n", fill = TRUE)
@@ -269,8 +301,9 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   cat("\n#################################", fill = TRUE)
   
   # predictions with and without credible intervals should be equal
-  cat("\nCheck that predictions are similar with/without the credinter mode:")
-  if (mean(pred_m_t2_1_loocv == pred_loocv_ci$pred) == 1) {
+  cat(paste0("\nChecking that the LOOCV predictions are",  
+             "similar with/without the credinter mode:"))
+  if (mean(pred_m_t1_1_loocv == pred_loocv_ci$pred) == 1) {
     cat("\n", fill = TRUE)
     cat("Running....predictions are similar. Let's continue.", fill = TRUE)
   } else {
@@ -323,7 +356,7 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
                                   error = function(e) print(e))
   cat("\n", fill = TRUE)
   cat(paste0("Two training observations", 
-          "(Do we wanna set a minimum here? How many? Based on number of Xs?):"), 
+          "(Do we wanna set a minimum here? How many? Based on the number of Xs?):"), 
       fill = TRUE)
   tryCatch({m_dxna_twoobs <- mgpr(datay = dy[1:2, ], datax = dx[1:2, ], 
                                   kernel = "matern32",
@@ -331,14 +364,14 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
            error = function(e) print(e))
   tryCatch({summary(m_dxna_twoobs)},
            error = function(e) print(e))
-  
+  cat("\n", fill = TRUE)
   cat("\nTesting if NAs in the response data: " , fill = TRUE)
   dy_na <- dy
   dy_na[sample(1, nrow(dy), 3), 2] <- NA
   tryCatch({m_na_t <- mgpr(datay = dy_na, datax = dx, kernel = "matern32",
                            kernpar = list())},
            error = function(e) print(e)) 
-
+  cat("\n", fill = TRUE)
   cat("Testing if NAs in the predictor variable data (should give errors) " ,
       fill = TRUE)
   dx_na <- dx
@@ -346,7 +379,24 @@ test_mgpr <- function(dy, dx, manustep = TRUE) {
   tryCatch({m_dxna_t <- mgpr(datay = dy, datax = dx_na, kernel = "matern32",
                              kernpar = list())},
            error = function(e) print(e))
-
+  cat("\n", fill = TRUE)
+  cat(paste0("Testing if var(x) == 0 in the predictor variable data", 
+             " when using the newdata mode (should not return errors)"),
+      fill = TRUE)
+  dx_var0 <- dx
+  dx_var0[, sample(1:ncol(dx_var0), 5)] <- 1
+  cat("\nhead(newdata):", fill = TRUE)
+  tryCatch({print(head(dx_var0))}, error = function(e) print(e))
+  
+  tryCatch({m_dxv0_t <- mgpr(datay = dy, datax = dx, kernel = "matern32",
+                             kernpar = list())},
+           error = function(e) print(e))
+  tryCatch({pred_dx_var0 <- predict(m_dxv0_t, newdatax = dx_var0)},
+           error = function(e) print(e))
+  
+  cat("\nhead(predictions):", fill = TRUE)
+  tryCatch({head(pred_dx_var0)},
+           error = function(e) print(e))
 }
 
 
