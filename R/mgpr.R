@@ -1,7 +1,14 @@
-# Multivariate Gaussian Process Regression; the mgpr library
+# The mgpr library for Multivariate Gaussian Process Regression
 
-# Implementation is based on Varvia et al. 2019 in TGRS
-# doi: 10.1109/TGRS.2018.2883495
+# Authors: Varvia, P., Räty, J., Packalen, P. 2022.
+
+# Implementation is based on Varvia et al. 2019 in TGRS:
+# Varvia, P., Lähivaara, T., Maltamo, M., Packalen, P. and Seppänen, A. (2019). 
+# Gaussian Process Regression for Forest Attribute Estimation From 
+# Airborne Laser Scanning Data, 
+# IEEE Transactions on Geoscience and Remote Sensing, 
+# vol. 57, no. 6, pp. 3361-3369. 
+# https://doi.org/10.1109/TGRS.2018.2883495
 
 #########################################
 
@@ -204,7 +211,6 @@ mgpr <- function(datay,
   )
   optimpar[names(optimpar_user)] <- optimpar_user
 
-
   # Transform data. This allows to set a vector input
   if (is.vector(datay)) {
     datay <- array(datay, dim = c(length(datay), 1))
@@ -325,7 +331,7 @@ mgpr <- function(datay,
   class(return_list) <- c("mgpr")
   
   # Add mean function
-  return_list$meanf <- init_meanf(meanf,return_list,verbose)
+  return_list$meanf <- init_meanf(meanf, return_list, verbose)
   # Compute prior expectancy for training data
   mu_Y <- apply(t(return_list$trainx), 2, FUN = return_list$meanf)
   
@@ -362,13 +368,18 @@ mgpr <- function(datay,
       
       # precomputed parts of prediction equations
       if (nx == 1) {
-        return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * return_list$K +
+        return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * 
+                                              return_list$K +
                                               return_list$E * return_list$Ie))
-        return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - mu_Y)
+        return_list$predM2 <- return_list$predM1 %*% 
+                                       as.vector(return_list$trainy - mu_Y)
       } else {
-        return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, return_list$K) +
-                                              kronecker(return_list$E, return_list$Ie)))
-        return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - t(mu_Y))
+        return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, 
+                                                      return_list$K) +
+                                              kronecker(return_list$E, 
+                                                        return_list$Ie)))
+        return_list$predM2 <- return_list$predM1 %*% 
+                                       as.vector(return_list$trainy - t(mu_Y))
       }
 
       # SSE cost
@@ -405,13 +416,18 @@ mgpr <- function(datay,
     }
 
     if (nx == 1) {
-      return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * return_list$K +
+      return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * 
+                                            return_list$K +
                                             return_list$E * return_list$Ie))
-      return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - mu_Y)
+      return_list$predM2 <- return_list$predM1 %*% 
+                                     as.vector(return_list$trainy - mu_Y)
     } else {
-      return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, return_list$K) +
-                                            kronecker(return_list$E, return_list$Ie)))
-      return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - t(mu_Y))
+      return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, 
+                                                    return_list$K) +
+                                            kronecker(return_list$E, 
+                                                      return_list$Ie)))
+      return_list$predM2 <- return_list$predM1 %*% 
+                                     as.vector(return_list$trainy - t(mu_Y))
     }
   } else { # if user specified all kernel parameters
     # Kernel matrix K
@@ -425,13 +441,18 @@ mgpr <- function(datay,
     }
     
     if (nx == 1) {
-      return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * return_list$K +
+      return_list$predM1 <- chol2inv(chol(as.vector(return_list$Cy) * 
+                                            return_list$K +
                                             return_list$E * return_list$Ie))
-      return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - mu_Y)
+      return_list$predM2 <- return_list$predM1 %*% 
+                                     as.vector(return_list$trainy - mu_Y)
     } else {
-      return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, return_list$K) +
-                                            kronecker(return_list$E, return_list$Ie)))
-      return_list$predM2 <- return_list$predM1 %*% as.vector(return_list$trainy - t(mu_Y))
+      return_list$predM1 <- chol2inv(chol(kronecker(return_list$Cy, 
+                                                    return_list$K) +
+                                            kronecker(return_list$E, 
+                                                      return_list$Ie)))
+      return_list$predM2 <- return_list$predM1 %*% 
+                                    as.vector(return_list$trainy - t(mu_Y))
     }
   }
   
@@ -471,7 +492,6 @@ summary.mgpr <- function(mgpr) {
     "\n", "Mean function: ", environment(mgpr[["meanf"]])[["meanftype"]], "\n"
   )
 }
-
 
 #' Predict function for an mgpr model
 #'
@@ -595,8 +615,7 @@ predict.mgpr <- function(mgpr,
       if (any(!(colnames(newdatax) %in% mgpr$XColName))) {
         stop(paste0(
           "Error. Predictor names in new data differ from those ",
-          "of training data!"
-        ))
+          "of training data!"))
       } else {
         newdatax <- newdatax[, mgpr$XColName]
       }
@@ -706,9 +725,11 @@ predict.mgpr <- function(mgpr,
   # Matrices used in the prediction.
   
   if (!is.null(dim(Targetdatax))) {
-    d <- t(apply(Targetdatax, 2, FUN = function(x) sqrt(colSums((Traindatax - x)^2))))
+    d <- t(apply(Targetdatax, 2, 
+                 FUN = function(x) sqrt(colSums((Traindatax - x)^2))))
   } else { # only one predictor
-    d <- t(apply(t(as.array(Targetdatax)), 2, FUN = function(x) sqrt(colSums((Traindatax - x)^2))))
+    d <- t(apply(t(as.array(Targetdatax)), 2, 
+                 FUN = function(x) sqrt(colSums((Traindatax - x)^2))))
   }
   Kstar <- mgpr$covfunc(d, ksigma, corlen)
   if (!is.null(dim(Targetdatax))) {
@@ -723,7 +744,8 @@ predict.mgpr <- function(mgpr,
     meanpreds_tar <- mu_Target + t(M3 %*% mgpr$predM2)
   } else {
     M3 <- kronecker(mgpr$Cy, Kstar)
-    meanpreds_tar <- mu_Target + t(array(M3 %*% mgpr$predM2, dim = c(n_target, nx)))
+    meanpreds_tar <- mu_Target + t(array(M3 %*% 
+                                         mgpr$predM2, dim = c(n_target, nx)))
   }
 
   if (!is.null(credinter) | fixneg | covout) {
