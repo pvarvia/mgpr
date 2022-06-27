@@ -105,12 +105,12 @@ The core functions of the mgpr package use vectorized operations. Thus, we recom
 # Related publications
 
 Varvia, P., Lähivaara, T., Maltamo, M., Packalen, P. and Seppänen, A. (2019). Gaussian Process Regression for Forest Attribute
-Estimation From Airborne Laser Scanning Data, IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 6, pp. 3361&#1503369. https://doi.org/10.1109/TGRS.2018.2883495
+Estimation From Airborne Laser Scanning Data, IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 6, pp. 3361-3369. https://doi.org/10.1109/TGRS.2018.2883495
 
 Varvia, P., Räty, J., Korhonen, L., and Packalen, P. (2021). Gaussian Process Regression for Airborne Laser Scanning Based Forest Inventory:
-Validation and Parameter Selection. In Proceedings of the SilviLaser Conference 2021, pp. 98&#150100. https://doi.org/10.34726/wim.1928
+Validation and Parameter Selection. In Proceedings of the SilviLaser Conference 2021, pp. 98-100. https://doi.org/10.34726/wim.1928
 
 Räty, J., Varvia, P., Korhonen, L., Savolainen, P., Maltamo, M. and Packalen, P. (2022). A Comparison of Linear-Mode and Single-Photon Airborne LiDAR in Species-Specific Forest Inventories,
-IEEE Transactions on Geoscience and Remote Sensing, vol. 60, pp. 1&#15014.  https://doi.org/10.1109/TGRS.2021.3060670
+IEEE Transactions on Geoscience and Remote Sensing, vol. 60, pp. 1-14.  https://doi.org/10.1109/TGRS.2021.3060670
 
 Varvia, P., Räty, J. and Packalen, P. (2022) mgpr: An R ......, TBA
