@@ -8,8 +8,7 @@ rm(list = ls())
 
 # Install the mgpr library
 # require(devtools) # Install the newest if not alreary installed
-# install_github("JJRaty/MGPR", 
-# ***REMOVED***, force = TRUE)
+# install_github("pvarvia/mgpr", force = TRUE)
 #
 require(mgpr)
 # Load data
