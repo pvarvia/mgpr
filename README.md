@@ -10,6 +10,12 @@ To cite the package use `citation()` from within R:
 citation("mgpr")
 # Varvia, P., Räty, J. and Packalen, P. (2022). mgpr....
 ```   
+# Installation
+
+*mgpr* can be installed by running
+```r
+remotes::install_github("pvarvia/mgpr",ref = "main")
+```
 
 # Key functionalities
 
