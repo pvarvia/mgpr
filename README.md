@@ -91,8 +91,8 @@ summary(gp0)
 ### Demo data
 
 The *mgprdata* is used for the demonstration of area-based forest inventory with the mgpr library.
-The *mgprdata* comprises 825 circular field plots located in the Finnish boreal forests.
-For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data.
+The *mgprdata* comprises 826 circular field plots located in the Finnish boreal forests.
+For each field plot, there are 37 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH).
 
 The *mgprdata* is a part of the forest inventory data used for remote sensing-based forest management inventories in Finland.
 The acquisition of the field data (kaukokartoituskoealat/inventointikoealat) is operated by Finnish forest centre.

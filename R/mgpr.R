@@ -1,9 +1,9 @@
 # The mgpr library for Multivariate Gaussian Process Regression
 
-# Authors: Varvia, P., R‰ty, J., Packalen, P. 2022.
+# Authors: Varvia, P., R√§ty, J., Packalen, P. 2022.
 
 # Implementation is based on Varvia et al. 2019 in TGRS:
-# Varvia, P., L‰hivaara, T., Maltamo, M., Packalen, P. and Sepp‰nen, A. (2019). 
+# Varvia, P., L√§hivaara, T., Maltamo, M., Packalen, P. and Sepp√§nen, A. (2019). 
 # Gaussian Process Regression for Forest Attribute Estimation From 
 # Airborne Laser Scanning Data, 
 # IEEE Transactions on Geoscience and Remote Sensing, 
@@ -72,7 +72,7 @@
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:5], datax = mgprdata[, 6:29],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' @import Matrix
@@ -467,7 +467,7 @@ mgpr <- function(datay,
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:5], datax = mgprdata[, 6:29],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' summary(m)
@@ -527,7 +527,7 @@ summary.mgpr <- function(mgpr) {
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:5], datax = mgprdata[, 6:29],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' p <- predict(m, credinter = 0.95)
