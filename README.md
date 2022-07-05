@@ -24,25 +24,25 @@ remotes::install_github("pvarvia/mgpr",ref = "main")
 The *mgpr* function is used to fit a multivariate Gaussian process regression model.
 By default *mgpr* fits a GP with the Matérn 3/2 kernel/covariance function and training data average mean function. The kernel parameters (length scale, kernel variance and error variance) are optimized using the training data.
 ```r
-gp <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29])
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40])
 ```
 The implemented covariance functions include Matérn 1/2, 3/2 (default), and 5/2, and squared exponential/rbf. Mean functions include zero, training data average (default) and a linear trend. These can be specified using the options *kernel* and *meanf*:
 ```r
-gp <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29], kernel = "rbf", meanf = "linear")
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernel = "rbf", meanf = "linear")
 ```
 The kernel parameters can also be set manually using *kernpar*, e.g:
 ```r
-gp <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29], kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 ```
 If only some of the kernel parameters are set, the missing parameters will be optimized using training data, for example
 ```r
-gp <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29], kernpar = list(corlen = 5))
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernpar = list(corlen = 5))
 ```
 will optimize kernel variance *sigma* and error variance *errorvar*, while keeping the length scale at 5.
 
 The kernel parameter optimization uses bounded simulated annealing as implemented in the package [optimization](https://cran.r-project.org/web/packages/optimization/index.html). The bounds, starting point, and number of data folds used in computing the goodness of fit can be modified using *optimpar*, the default values are
 ```r
-gp <- mgpr(datay = mgprdata[, 2:5], datax = mgprdata[, 5:29],optimpar = list(optkfold = 5,
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],optimpar = list(optkfold = 5,
                                  optstart = c(1, 10, 0.1),
                                  optlower = c(0.3, 3, 0.03),
                                  optupper = c(10, 50, 0.5)))
@@ -53,25 +53,25 @@ The *predict* function is used to predict using an mgpr model. For example, let'
 ```r
 dtest <- mgprdata[seq(1, nrow(mgprdata), 3),]
 dtrain <- mgprdata[-seq(1, nrow(mgprdata), 3),]
-gp <- mgpr(datay = dtrain[, 2:5], datax = dtrain[, 5:29])
+gp <- mgpr(datay = dtrain[, 1:3], datax = dtrain[, 4:40])
 ```   
 We can now predict the response variables on the test data using *predict*:
 ```r
-gp_pred <- predict(gp, newdatax = dtest[, 5:29])
+gp_pred <- predict(gp, newdatax = dtest[, 4:40])
 ```
 This will output a data frame with the predicted values. Usually we also want credible intervals (CI) for the predictions, to get e.g. 95% CIs:
 ```r
-gp_pred <- predict(gp, newdatax = dtest[, 5:29], credinter = 0.95)
+gp_pred <- predict(gp, newdatax = dtest[, 4:40], credinter = 0.95)
 ```
 Setting *covout* will output the prediction covariance matrices
 ```r
-gp_pred <- predict(gp, newdatax = dtest[, 5:29], covout = TRUE)
+gp_pred <- predict(gp, newdatax = dtest[, 4:40], covout = TRUE)
 ```
 With either *credinter* or *covout* specified, the output will be a list of data frames, with separate data frames for predictions, credible intervals, and prediction covariances.
 
 The package implements a simple method to bound predictions to be non-negative, which is useful when the response variables represent attributes such as volume or height, which cannot be negative. This is called using the option *fixneg*, e.g.
 ```r
-gp_pred <- predict(gp, newdatax = dtest[, 5:29], fixneg = TRUE)
+gp_pred <- predict(gp, newdatax = dtest[, 4:40], fixneg = TRUE)
 ```
 
 The *predict* function can also be used to do k-fold cross-validation using the training data, this is specified by the *kfold* value. For example, to do 10-fold cross-validation:
