@@ -2,7 +2,7 @@ mgpr <img src="figs/mgprlogo_nobg.png" width="220" align="right"/>
 =================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
-R package for multivariate Gaussian process regression
+An R package for multivariate Gaussian process regression
 
 To cite the package use `citation()` from within R:
 
@@ -12,9 +12,10 @@ citation("mgpr")
 ```   
 # Installation
 
-*mgpr* can be installed by running
+The *mgpr* package can be installed by running
 ```r
-remotes::install_github("pvarvia/mgpr",ref = "main")
+remotes::install_github("pvarvia/mgpr", ref = "main")
+library(mgpr)
 ```
 
 # Key functionalities
@@ -26,15 +27,16 @@ By default *mgpr* fits a GP with the Matérn 3/2 kernel/covariance function and 
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40])
 ```
-The implemented covariance functions include Matérn 1/2, 3/2 (default), and 5/2, and squared exponential/rbf. Mean functions include zero, training data average (default) and a linear trend. These can be specified using the options *kernel* and *meanf*:
+The implemented covariance functions include Matérn 1/2, 3/2 (default), and 5/2, and squared exponential/rbf. Mean functions include zero, training data average (default) and a linear trend. These can be specified using the options *kernel* and *meanf*.
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernel = "rbf", meanf = "linear")
 ```
-The kernel parameters can also be set manually using *kernpar*, e.g:
+The kernel parameters can also be set manually using *kernpar*, for example:
 ```r
-gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], 
+									kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 ```
-If only some of the kernel parameters are set, the missing parameters will be optimized using training data, for example
+If only some of the kernel parameters are set, the missing parameters will be optimized using training data. For example
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernpar = list(corlen = 5))
 ```
@@ -42,10 +44,11 @@ will optimize kernel variance *sigma* and error variance *errorvar*, while keepi
 
 The kernel parameter optimization uses bounded simulated annealing as implemented in the package [optimization](https://cran.r-project.org/web/packages/optimization/index.html). The bounds, starting point, and number of data folds used in computing the goodness of fit can be modified using *optimpar*, the default values are
 ```r
-gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],optimpar = list(optkfold = 5,
-                                 optstart = c(1, 10, 0.1),
-                                 optlower = c(0.3, 3, 0.03),
-                                 optupper = c(10, 50, 0.5)))
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], 
+									optimpar = list(optkfold = 5,
+													optstart = c(1, 10, 0.1),
+													optlower = c(0.3, 3, 0.03),
+													optupper = c(10, 50, 0.5)))
 ```
 
 ### Predict method for an mgpr model
@@ -63,13 +66,13 @@ This will output a data frame with the predicted values. Usually we also want cr
 ```r
 gp_pred <- predict(gp, newdatax = dtest[, 4:40], credinter = 0.95)
 ```
-Setting *covout* will output the prediction covariance matrices
+Setting *covout* will output the prediction covariance matrices:
 ```r
 gp_pred <- predict(gp, newdatax = dtest[, 4:40], covout = TRUE)
 ```
 With either *credinter* or *covout* specified, the output will be a list of data frames, with separate data frames for predictions, credible intervals, and prediction covariances.
 
-The package implements a simple method to bound predictions to be non-negative, which is useful when the response variables represent attributes such as volume or height, which cannot be negative. This is called using the option *fixneg*, e.g.
+The package implements a simple method to bound predictions to be non-negative, which is useful when the response variables represent non-negative attributes, such as volume or height. This is called using the option *fixneg*, for example:
 ```r
 gp_pred <- predict(gp, newdatax = dtest[, 4:40], fixneg = TRUE)
 ```
@@ -90,9 +93,9 @@ summary(gp0)
 
 ### Demo data
 
-The *mgprdata* is used for the demonstration of area-based forest inventory with the mgpr library.
+The *mgprdata* is used for the demonstration of area-based forest inventory with the *mgpr* package.
 The *mgprdata* comprises 826 circular field plots located in the Finnish boreal forests.
-For each field plot, there are 37 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH).
+For each field plot, there are 37 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools ([rapidlasso GmbH](http://rapidlasso.com/LAStools)).
 
 The *mgprdata* is a part of the forest inventory data used for remote sensing-based forest management inventories in Finland.
 The acquisition of the field data (kaukokartoituskoealat/inventointikoealat) is operated by Finnish forest centre.
@@ -106,7 +109,7 @@ data(mgprdata)
 ```  
 
 # BLAS/LAPACK
-The core functions of the mgpr package use vectorized operations. Thus, we recommend the use of high-performance multi-threaded linear algebra libraries (e.g. Intel oneMKL) linked to R.
+The core functions of the mgpr package use vectorized operations. Thus, we recommend the use of high-performance multi-threaded linear algebra libraries (e.g. [Intel oneAPI MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html)) linked to R.
 
 # Related publications
 
