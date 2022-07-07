@@ -34,7 +34,7 @@ gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernel = "rbf", me
 The kernel parameters can also be set manually using *kernpar*, for example:
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], 
-									kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
+           kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 ```
 If only some of the kernel parameters are set, the missing parameters will be optimized using training data. For example
 ```r
@@ -45,10 +45,8 @@ will optimize kernel variance *sigma* and error variance *errorvar*, while keepi
 The kernel parameter optimization uses bounded simulated annealing as implemented in the package [optimization](https://cran.r-project.org/web/packages/optimization/index.html). The bounds, starting point, and number of data folds used in computing the goodness of fit can be modified using *optimpar*, the default values are
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], 
-									optimpar = list(optkfold = 5,
-													optstart = c(1, 10, 0.1),
-													optlower = c(0.3, 3, 0.03),
-													optupper = c(10, 50, 0.5)))
+           optimpar = list(optkfold = 5, optstart = c(1, 10, 0.1),
+                           optlower = c(0.3, 3, 0.03), optupper = c(10, 50, 0.5)))
 ```
 
 ### Predict method for an mgpr model
