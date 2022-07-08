@@ -4,10 +4,17 @@
 \alias{mgpr}
 \title{Fitting an mgpr model}
 \usage{
-mgpr(datay, datax, kernel = "matern32", kernpar = list(sigma = NULL,
-  corlen = NULL, errorvar = NULL), meanf = "avg",
-  optimpar = list(optkfold = 5, optstart = c(1, 10, 0.1), optlower =
-  c(0.3, 3, 0.03), optupper = c(10, 50, 0.5)), verbose = FALSE, ...)
+mgpr(
+  datay,
+  datax,
+  kernel = "matern32",
+  kernpar = list(sigma = NULL, corlen = NULL, errorvar = NULL),
+  meanf = "avg",
+  optimpar = list(optkfold = 5, optstart = c(1, 10, 0.1), optlower = c(0.3, 3, 0.03),
+    optupper = c(10, 50, 0.5), optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)),
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{datay}{a data frame or an object coercible by as.data.frame to a
@@ -22,8 +29,8 @@ data frame containing the predictor variables (columns) for each observation
 Alternatives: "\code{matern12}", "\code{matern32}" (default), "\code{matern52}", and
 "\code{rbf}".}
 
-\item{kernpar}{kernel hyperparameters sigma, correlation length and noise variance
-(nugget) given as a list.
+\item{kernpar}{kernel hyperparameters \code{sigma}, correlation length \code{corlen} and noise variance
+\code{errorvar} given as a list.
 Kernel hyperparameters not set by the user are estimated using the training set.}
 
 \item{meanf}{mean function, choices: "\code{zero}", "\code{avg}" (default), "\code{linear}".
@@ -33,10 +40,16 @@ assumes no trend, "\code{avg}" uses the training set mean, "\code{linear}"
 fits a linear minimum mean square error model to the training set.}
 
 \item{optimpar}{List of control parameters for the hyperparameter estimation:
-\code{optkfold} kfold value for the cost function, must be in the range
-2 and nrow(data), \code{optstart} initial vector for the optimization,
-\code{optlower} lower bound vector and \code{optupper} upper bound vector.
-Initial and bound vectors have the order \code{c(sigma, corlen, errorvar)}.}
+\code{optkfold} defines a kfold value for the cost function (must be in the range
+2 and nrow(data)), \code{optstart} defines an initial vector for the optimization,
+\code{optlower} defines a lower bound vector, \code{optupper} defines a upper bound vector, 
+and \code{optcontrol} includes the control parameters of the simulated annealing used 
+as an optimization approach in the hyperparameter estimation.
+Initial and bound vectors have the order \code{c(sigma, corlen, errorvar)}.
+For the control parameters, please refer to the documentation of the \code{optimization::optim_sa} function. 
+Empty list uses the default parameters
+defined in the \code{optimization::optim_sa} function (ver. 1.0-9). The default setup of
+\code{mgpr} modifies three of the \code{optimization::optim_sa} function's default parameters: \code{optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)}.}
 
 \item{verbose}{logical. Report extra information on progress.}
 
@@ -68,9 +81,6 @@ components: \tabular{llllllllllllll}{
 }
 \description{
 \code{mgpr} is used to fit a Multivariate Gaussian Process Regression model.
-}
-\details{
-What to put here? Do we need this?
 }
 \examples{
 data(mgprdata)

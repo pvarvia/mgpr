@@ -1,5 +1,5 @@
 #####################################################################
-# The mgpr library, Varvia, Räty and Packalen 2020
+# The mgpr library, Varvia, RÃ¤ty and Packalen 2020
 #
 #  The test function of the mgpr library
 #
@@ -14,8 +14,8 @@ require(mgpr)
 # Load data
 data(mgprdata)
 
-test_x <-  mgprdata[1:50, 5:40]
-test_y <-  mgprdata[1:50, 2:4]
+test_x <-  mgprdata[1:200, 5:40]
+test_y <-  mgprdata[1:200, 2:4]
 
 # Run example
 # Inputs must be data frames with several observations, several Xs and Ys

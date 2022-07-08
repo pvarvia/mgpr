@@ -40,12 +40,14 @@ gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], kernpar = list(cor
 ```
 will optimize kernel variance *sigma* and error variance *errorvar*, while keeping the length scale at 5.
 
-The kernel parameter optimization uses bounded simulated annealing as implemented in the package [optimization](https://cran.r-project.org/web/packages/optimization/index.html). The bounds, starting point, and number of data folds used in computing the goodness of fit can be modified using *optimpar*, the default values are
+The kernel parameter optimization uses bounded simulated annealing as implemented in the package [optimization](https://cran.r-project.org/web/packages/optimization/index.html). The bounds (*optlower* and *optupper*), starting point (*optstart*), number of data folds (*optkfold*), and the control parameters of the simulated annealing (*optcontrol*) can be modified using *optimpar*, the default values are
 ```r
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40], 
            optimpar = list(optkfold = 5, optstart = c(1, 10, 0.1),
-                           optlower = c(0.3, 3, 0.03), optupper = c(10, 50, 0.5)))
+                           optlower = c(0.3, 3, 0.03), optupper = c(10, 50, 0.5), 
+                           optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)))
 ```
+Note that the *optcontrol* list can be used to overwrite the default parameters defined in the [optimization::optim_sa (ver. 1.0-9)](https://cran.r-project.org/web/packages/optimization/optimization.pdf) function.
 
 ### Predict method for an mgpr model
 The *predict* function is used to predict using a mgpr model. For example, let's split the demo data to separate train and test sets by taking every third row and train a default *mgpr* model using the training data.
@@ -84,7 +86,7 @@ Setting *kfold* to the number of training data will do leave-one-out cross-valid
 The *summary* function for class "mgpr". Prints information on the training data and GP parameters.
 
 ```r
-summary(gp0)
+summary(gp)
 ```  
 
 ### Demo data
