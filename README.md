@@ -11,11 +11,9 @@ citation("mgpr")
 # Varvia, P., Räty, J. and Packalen, P. (2022). mgpr....
 ```   
 # Installation
-
-The *mgpr* package can be installed by running
+Install the *mgpr* from GitHub github using the R package *remotes*:
 ```r
 remotes::install_github("pvarvia/mgpr", ref = "main")
-library(mgpr)
 ```
 
 # Key functionalities
