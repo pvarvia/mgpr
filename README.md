@@ -48,7 +48,7 @@ gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
 ```
 
 ### Predict method for an mgpr model
-The *predict* function is used to predict using an mgpr model. For example, let's split the demo data to separate train and test sets by taking every third row and train a default GP using the training data.
+The *predict* function is used to predict using a mgpr model. For example, let's split the demo data to separate train and test sets by taking every third row and train a default GP using the training data.
 ```r
 dtest <- mgprdata[seq(1, nrow(mgprdata), 3),]
 dtrain <- mgprdata[-seq(1, nrow(mgprdata), 3),]
