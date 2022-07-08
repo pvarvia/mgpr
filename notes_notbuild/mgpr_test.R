@@ -1,5 +1,5 @@
 #####################################################################
-# The mgpr library, Varvia, R?ty and Packalen 2020
+# The mgpr library, Varvia, Räty and Packalen 2020
 #
 #  The test function of the mgpr library
 #
