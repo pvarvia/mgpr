@@ -4,8 +4,15 @@
 \alias{predict}
 \title{Predict function for an mgpr model}
 \usage{
-predict(mgpr, newdatax = NULL, credinter = NULL, covout = FALSE,
-  kfold = 0, fixneg = FALSE, verbose = FALSE)
+predict(
+  mgpr,
+  newdatax = NULL,
+  credinter = NULL,
+  covout = FALSE,
+  kfold = 0,
+  fixneg = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{mgpr}{a \code{mgpr} model object, usually, a result of a call to

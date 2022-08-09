@@ -24,8 +24,8 @@
 #' @param kernel a name of the kernel function.
 #' Alternatives: "\code{matern12}", "\code{matern32}" (default), "\code{matern52}", and
 #' "\code{rbf}".
-#' @param kernpar kernel hyperparameters sigma, correlation length and noise variance
-#' (nugget) given as a list.
+#' @param kernpar kernel hyperparameters \code{sigma}, correlation length \code{corlen} and noise variance
+#' \code{errorvar} given as a list.
 #' Kernel hyperparameters not set by the user are estimated using the training set.
 #' @param meanf mean function, choices: "\code{zero}", "\code{avg}" (default), "\code{linear}".
 #' Mean function specifies a deterministic trend in the Gaussian process and mostly
@@ -34,12 +34,18 @@
 #' fits a linear minimum mean square error model to the training set.
 #' @param verbose logical. Report extra information on progress.
 #' @param optimpar List of control parameters for the hyperparameter estimation:
-#' \code{optkfold} kfold value for the cost function, must be in the range
-#' 2 and nrow(data), \code{optstart} initial vector for the optimization,
-#' \code{optlower} lower bound vector and \code{optupper} upper bound vector.
+#' \code{optkfold} defines a kfold value for the cost function (must be in the range
+#' 2 and nrow(data)), \code{optstart} defines an initial vector for the optimization,
+#' \code{optlower} defines a lower bound vector, \code{optupper} defines a upper bound vector, 
+#' and \code{optcontrol} includes the control parameters of the simulated annealing used 
+#' as an optimization approach in the hyperparameter estimation.
 #' Initial and bound vectors have the order \code{c(sigma, corlen, errorvar)}.
+#' For the control parameters, please refer to the documentation of the \code{optimization::optim_sa} function. 
+#' Empty list uses the default parameters
+#' defined in the \code{optimization::optim_sa} function (ver. 1.0-9). The default setup of
+#' \code{mgpr} modifies three of the \code{optimization::optim_sa} function's default parameters: \code{optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)}. 
+#'
 #' @param ... additional arguments.
-#' @details What to put here? Do we need this?
 #'
 #' @return \code{mgpr} returns an object of class "\code{mgpr}". The function
 #' \code{\link{summary}} prints a summary of an \code{mgpr} object and the
@@ -83,10 +89,12 @@ mgpr <- function(datay,
                  kernel = "matern32",
                  kernpar = list(sigma = NULL, corlen = NULL, errorvar = NULL),
                  meanf = "avg",
-                 optimpar = list(optkfold = 5,
-                                 optstart = c(1, 10, 0.1),
-                                 optlower = c(0.3, 3, 0.03),
-                                 optupper = c(10, 50, 0.5)),
+                 optimpar = list(optkfold   = 5,
+                                 optstart   = c(1, 10, 0.1),
+                                 optlower   = c(0.3, 3, 0.03),
+                                 optupper   = c(10, 50, 0.5),
+                                 optcontrol = list(t0 = 10, nlimit = 50, 
+                                                   r = 0.9)),
                  verbose = FALSE, ...) {
   normpred <- TRUE # Default: always normalize
   # Catch "developer" arguments; normalization can be switched off (for kfold).
@@ -204,13 +212,53 @@ mgpr <- function(datay,
   # Parameter optimization settings
   optimpar_user <- optimpar
   optimpar <- list(
-    optkfold = 5,
-    optstart = c(1, 10, 0.1),
-    optlower = c(0.3, 3, 0.03),
-    optupper = c(10, 50, 0.5)
-  )
+    optkfold   = 5,
+    optstart   = c(1, 10, 0.1),
+    optlower   = c(0.3, 3, 0.03),
+    optupper   = c(10, 50, 0.5),
+    optcontrol = list(t0     = 10, # Our default t0, nlimit and r
+                      nlimit = 50,
+                      r      = 0.9))
+  
+  # These are optim_sa default control params (optimization package v. 1.0-9)
+  optcontrol_orig = list(vf = NULL, 
+                    rf      = 1,     
+                    dyn_rf  = TRUE,
+                    t0      = 1000,
+                    nlimit  = 100,
+                    r       = 0.6,
+                    k       = 1,
+                    t_min   = 0.1,
+                    maxgood = 100,
+                    stopac  = 30,
+                    ac_acc  = NA)
+  
+  # Check for possible typos in control params
+  if (any(!(names(optimpar_user$optcontrol) %in% 
+            names(optcontrol_orig)))) {
+    stop(paste0("Error: Wrong names detected in the ", 
+               "parameter names of optimpar$optcontrol."))
+  }
+  
   optimpar[names(optimpar_user)] <- optimpar_user
-
+  
+  # some checks
+  if (!is.list(optimpar$optcontrol)) {
+    stop("Error: optimpar$optcontrol must be a list.")
+  }
+  
+  if (length(optimpar$optstart) != 3 | length(optimpar$optlower) != 3 | 
+      length(optimpar$optupper) != 3) {
+    stop(paste0("Error: optimpar$opstart, optimpar$optlower, and ", 
+                "optimpar$optupper must be vectors of 3 values."))
+  }
+  
+  # Ensure that the default parameters are as they were listed above:
+  # Replace user-defined
+  optcontrol_orig[names(optimpar$optcontrol)] <- optimpar$optcontrol
+  # replace to optimpar that is the final set of params
+  optimpar$optcontrol <- optcontrol_orig
+  
   # Transform data. This allows to set a vector input
   if (is.vector(datay)) {
     datay <- array(datay, dim = c(length(datay), 1))
@@ -339,11 +387,10 @@ mgpr <- function(datay,
   # Hyperparameter optimization
   # the kernel parameters that are set to NULL will be estimated
   
-  optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)
   # for progress bar
   iter <- 0
   # worst case
-  maxiter <- optcontrol$nlimit*(log(0.1)-log(optcontrol$t0))/log(optcontrol$r)
+  maxiter <- optimpar$optcontrol$nlimit*(log(0.1)-log(optimpar$optcontrol$t0))/log(optimpar$optcontrol$r)
 
   if (is.null(ksigma) || is.null(corlen) || is.null(errorvar)) {
     if (verbose) {
@@ -411,7 +458,7 @@ mgpr <- function(datay,
       start = optimpar$optstart,
       lower = optimpar$optlower,
       upper = optimpar$optupper,
-      control = optcontrol
+      control = optimpar$optcontrol
     )
     
     # Modify return_list
