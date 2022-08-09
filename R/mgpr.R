@@ -338,10 +338,21 @@ mgpr <- function(datay,
   ##############################################
   # Hyperparameter optimization
   # the kernel parameters that are set to NULL will be estimated
+  
+  optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)
+  # for progress bar
+  iter <- 0
+  # worst case
+  maxiter <- optcontrol$nlimit*(log(0.1)-log(optcontrol$t0))/log(optcontrol$r)
 
   if (is.null(ksigma) || is.null(corlen) || is.null(errorvar)) {
     if (verbose) {
       cat("Optimizing hyperparameters...", fill = TRUE)
+      pb <- txtProgressBar(min = 0,      
+                           max = round(0.05*maxiter), #usually finishes in this
+                           style = 3,    
+                           width = 50,   
+                           char = "=")
     }
     # set seed for k-fold to keep the same folds across iterations
     kfoldseed <- as.numeric(Sys.time())
@@ -381,6 +392,12 @@ mgpr <- function(datay,
         return_list$predM2 <- return_list$predM1 %*% 
                                        as.vector(return_list$trainy - t(mu_Y))
       }
+      
+      if (verbose) {
+        # update progress bar
+        iter <<- iter + 1
+        setTxtProgressBar(pb, iter)
+      }
 
       # SSE cost
       yhat <- kfold_mgpr(return_list, kfold = optimpar$optkfold)
@@ -394,8 +411,9 @@ mgpr <- function(datay,
       start = optimpar$optstart,
       lower = optimpar$optlower,
       upper = optimpar$optupper,
-      control = list(t0 = 10, nlimit = 50, r = 0.9)
+      control = optcontrol
     )
+    
     # Modify return_list
     if (is.null(ksigma)) {
       return_list$sigma <- bestpars$par[1]
@@ -428,6 +446,17 @@ mgpr <- function(datay,
                                                       return_list$Ie)))
       return_list$predM2 <- return_list$predM1 %*% 
                                      as.vector(return_list$trainy - t(mu_Y))
+    }
+    
+    if (verbose) {
+      close(pb)
+      cat(
+        "\n",  
+        "Finished optimization\n",
+        "Sigma:",return_list$sigma,"\n",
+        "Correlation length:",return_list$corlen,"\n",
+        "Error variance:",return_list$errorvar,"\n"
+      )
     }
   } else { # if user specified all kernel parameters
     # Kernel matrix K
