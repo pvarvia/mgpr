@@ -386,23 +386,13 @@ mgpr <- function(datay,
   ##############################################
   # Hyperparameter optimization
   # the kernel parameters that are set to NULL will be estimated
-  
-  # for progress bar
-  iter <- 0
-  # worst case
-  maxiter <- optimpar$optcontrol$nlimit*(log(0.1)-log(optimpar$optcontrol$t0))/log(optimpar$optcontrol$r)
 
   if (is.null(ksigma) || is.null(corlen) || is.null(errorvar)) {
     if (verbose) {
       cat("Optimizing hyperparameters...", fill = TRUE)
-      pb <- txtProgressBar(min = 0,      
-                           max = round(0.05*maxiter), #usually finishes in this
-                           style = 3,    
-                           width = 50,   
-                           char = "=")
-    }
-    # set seed for k-fold to keep the same folds across iterations
-    kfoldseed <- as.numeric(Sys.time())
+	  cat("Number of iterations:", fill = TRUE)
+	  iter <- 1
+	}
 
     # Cost function for the hyperparameter optimization
     parcostfun <- function(pars) { # pars: [sigma corlen errorvar]
@@ -441,12 +431,16 @@ mgpr <- function(datay,
       }
       
       if (verbose) {
-        # update progress bar
-        iter <<- iter + 1
-        setTxtProgressBar(pb, iter)
+        # update iter number
+        cat(iter, "\r") 
+		flush.console()
+		iter <<- iter + 1
       }
 
       # SSE cost
+	  # The folds change in each iteration on purpose.
+	  # This essentially aims to approximate the full k-fold CV
+	  # using minibatches of k samples and stochastic optimization.
       yhat <- kfold_mgpr(return_list, kfold = optimpar$optkfold)
       cost <- sum((yhat - return_list$trainy)^2)
       return(cost)
@@ -496,7 +490,6 @@ mgpr <- function(datay,
     }
     
     if (verbose) {
-      close(pb)
       cat(
         "\n",  
         "Finished optimization\n",
