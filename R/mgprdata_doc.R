@@ -2,7 +2,7 @@
 #' 
 #' @description 
 #' The mgprdata comprises 826 circular field plots (r = 9 m or 12.62 m) located in the Finnish boreal forests. 
-#' For each field plot, there are 37 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH). 
+#' For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH). 
 #' @details 
 #' Observed variables: \tabular{lll}{
 #'   \code{Volume, v} \tab \tab Observed timber volume (m3/ha). \cr
@@ -40,9 +40,9 @@
 #' 
 #' #' # Multivariate model using the matern 32 kernel
 #' gp2 <- mgpr(datay = mgprdata[, c("h", "d", "v")], 
-#' datax = mgprdata[, 4:40], kernel = "rbf", meanf = "avg")
+#' datax = mgprdata[, 4:39], kernel = "rbf", meanf = "avg")
 #' @name mgprdata
 #' @docType data
-#' @author Janne R?ty, Petri Varvia
+#' @author Janne Räty, Petri Varvia
 #' @usage data(mgprdata)
 NULL

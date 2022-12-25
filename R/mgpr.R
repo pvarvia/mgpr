@@ -78,7 +78,7 @@
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' @import Matrix
