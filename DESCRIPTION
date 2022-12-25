@@ -14,4 +14,4 @@ Authors@R: c(person("Varvia", "Petri", email = "petri.varvia@uef.fi",
 URL: https://artikkelidoi.org
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

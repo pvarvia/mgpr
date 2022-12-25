@@ -10,7 +10,7 @@ data(mgprdata)
 }
 \description{
 The mgprdata comprises 826 circular field plots (r = 9 m or 12.62 m) located in the Finnish boreal forests. 
-For each field plot, there are 37 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH).
+For each field plot, there are 36 plot-level features calculated from the airborne laser scanning (ALS) data using LAStools (rapidlasso GmbH).
 }
 \details{
 Observed variables: \tabular{lll}{
@@ -39,7 +39,7 @@ meanf="avg", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1))
 
 #' # Multivariate model using the matern 32 kernel
 gp2 <- mgpr(datay = mgprdata[, c("h", "d", "v")], 
-datax = mgprdata[, 4:40], kernel = "rbf", meanf = "avg")
+datax = mgprdata[, 4:39], kernel = "rbf", meanf = "avg")
 }
 \references{
 Varvia, P., Räty, J., Packalen, P. 2022.
@@ -52,5 +52,5 @@ The field data are openly available at: https://www.metsakeskus.fi/fi/avoin-mets
 The low-density ALS data provided by the National Land Survey of Finland are openly available at: https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/laser-scanning-data-05-p
 }
 \author{
-Janne R?ty, Petri Varvia
+Janne Räty, Petri Varvia
 }
