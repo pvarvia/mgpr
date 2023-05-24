@@ -22,28 +22,38 @@
 #' data frame containing the predictor variables (columns) for each observation
 #' (rows). It is recommended to use row and column names.
 #' @param kernel a name of the kernel function.
-#' Alternatives: "\code{matern12}", "\code{matern32}" (default), "\code{matern52}", and
+#' Alternatives: "\code{matern12}", "\code{matern32}" (default), 
+#' "\code{matern52}", and
 #' "\code{rbf}".
-#' @param kernpar kernel hyperparameters \code{sigma}, correlation length \code{corlen} and noise variance
+#' @param kernpar kernel hyperparameters \code{sigma}, correlation 
+#' length \code{corlen} and noise variance
 #' \code{errorvar} given as a list.
-#' Kernel hyperparameters not set by the user are estimated using the training set.
-#' @param meanf mean function, choices: "\code{zero}", "\code{avg}" (default), "\code{linear}".
+#' Kernel hyperparameters not set by the user are 
+#' estimated using the training set.
+#' @param meanf mean function, choices: "\code{zero}", "\code{avg}" (default),
+#'  "\code{linear}".
 #' Mean function specifies a deterministic trend in the Gaussian process and mostly
 #' affects extrapolation outside the training set. "\code{zero}" (default)
 #' assumes no trend, "\code{avg}" uses the training set mean, "\code{linear}"
 #' fits a linear minimum mean square error model to the training set.
 #' @param verbose logical. Report extra information on progress.
 #' @param optimpar List of control parameters for the hyperparameter estimation:
-#' \code{optkfold} defines a kfold value for the cost function (must be in the range
-#' 2 and nrow(data)), \code{optstart} defines an initial vector for the optimization,
-#' \code{optlower} defines a lower bound vector, \code{optupper} defines a upper bound vector, 
-#' and \code{optcontrol} includes the control parameters of the simulated annealing used 
+#' \code{optkfold} defines a kfold value for the cost function 
+#' (must be in the range 2 and nrow(data)), \code{optstart} defines an initial
+#'  vector for the optimization,
+#' \code{optlower} defines a lower bound vector, \code{optupper} defines 
+#' a upper bound vector, 
+#' and \code{optcontrol} includes the control parameters of the simulated 
+#' annealing used 
 #' as an optimization approach in the hyperparameter estimation.
 #' Initial and bound vectors have the order \code{c(sigma, corlen, errorvar)}.
-#' For the control parameters, please refer to the documentation of the \code{optimization::optim_sa} function. 
+#' For the control parameters, please refer to the documentation of the 
+#' \code{optimization::optim_sa} function. 
 #' Empty list uses the default parameters
-#' defined in the \code{optimization::optim_sa} function (ver. 1.0-9). The default setup of
-#' \code{mgpr} modifies three of the \code{optimization::optim_sa} function's default parameters: \code{optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)}. 
+#' defined in the \code{optimization::optim_sa} function (ver. 1.0-9). 
+#' The default setup of
+#' \code{mgpr} modifies three of the \code{optimization::optim_sa} function's 
+#' default parameters: \code{optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)}. 
 #'
 #' @param ... additional arguments.
 #'
@@ -55,7 +65,8 @@
 #' components: \tabular{llllllllllllll}{
 #'   \code{trainy} \tab \tab response variables of training data. \cr
 #'   \code{trainx} \tab \tab predictor variables of training data. \cr
-#'   \code{trainMeanSd} \tab \tab mean and standard deviation of training data. \cr
+#'   \code{trainMeanSd} \tab \tab mean and standard deviation of 
+#'   training data. \cr
 #'   \code{Cy} \tab \tab sample covariance for response variables. \cr
 #'   \code{E} \tab \tab error matrix. \cr
 #'   \code{Ie} \tab \tab identity matrix for setting E for all observations. \cr
@@ -63,22 +74,24 @@
 #'   \code{kernel} \tab \tab a name of the kernel function. \cr
 #'   \code{sigma} \tab \tab value of sigma. \cr
 #'   \code{corlen} \tab \tab value of correlation length. \cr
-#'   \code{errorvar} \tab \tab errorvar noise variance (a.k.a. nugget parameter). \cr
+#'   \code{errorvar} \tab \tab errorvar noise variance 
+#'   (a.k.a. nugget parameter). \cr
 #'   \code{meanf} \tab \tab name of the mean function \cr
 #'   \code{XColName} \tab \tab column names of predictor variables. \cr
 #'   \code{YColName} \tab \tab column names of response variable(s). \cr
 #'   \code{XRowName} \tab \tab row names of predictor variables. \cr
 #' }
-#' @references Varvia, P., Lahivaara, T., Maltamo, M., Packalen, P. and Seppanen, A. 2019.
-#' Gaussian process regression for forest attribute estimation from airborne laser scanning
-#' data. IEEE Transactions on Geoscience and Remote Sensing 57(6): 3361-3369.
+#' @references Varvia, P., Lahivaara, T., Maltamo, M., Packalen, P. 
+#' and Seppanen, A. 2019.Gaussian process regression for forest attribute 
+#' estimation from airborne laser scanning data. 
+#' IEEE Transactions on Geoscience and Remote Sensing 57(6): 3361-3369.
 #'
 #' R package article to appear.
 #'
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' @import Matrix
@@ -386,23 +399,13 @@ mgpr <- function(datay,
   ##############################################
   # Hyperparameter optimization
   # the kernel parameters that are set to NULL will be estimated
-  
-  # for progress bar
-  iter <- 0
-  # worst case
-  maxiter <- optimpar$optcontrol$nlimit*(log(0.1)-log(optimpar$optcontrol$t0))/log(optimpar$optcontrol$r)
 
   if (is.null(ksigma) || is.null(corlen) || is.null(errorvar)) {
     if (verbose) {
       cat("Optimizing hyperparameters...", fill = TRUE)
-      pb <- txtProgressBar(min = 0,      
-                           max = round(0.05*maxiter), #usually finishes in this
-                           style = 3,    
-                           width = 50,   
-                           char = "=")
-    }
-    # set seed for k-fold to keep the same folds across iterations
-    kfoldseed <- as.numeric(Sys.time())
+	  cat("Number of iterations:", fill = TRUE)
+	  iter <- 1
+	}
 
     # Cost function for the hyperparameter optimization
     parcostfun <- function(pars) { # pars: [sigma corlen errorvar]
@@ -441,12 +444,16 @@ mgpr <- function(datay,
       }
       
       if (verbose) {
-        # update progress bar
-        iter <<- iter + 1
-        setTxtProgressBar(pb, iter)
+        # update iter number
+        cat(iter, "\r") 
+		flush.console()
+		iter <<- iter + 1
       }
 
       # SSE cost
+	  # The folds change in each iteration on purpose.
+	  # This essentially aims to approximate the full k-fold CV
+	  # using minibatches of k samples and stochastic optimization.
       yhat <- kfold_mgpr(return_list, kfold = optimpar$optkfold)
       cost <- sum((yhat - return_list$trainy)^2)
       return(cost)
@@ -496,7 +503,6 @@ mgpr <- function(datay,
     }
     
     if (verbose) {
-      close(pb)
       cat(
         "\n",  
         "Finished optimization\n",
@@ -538,12 +544,13 @@ mgpr <- function(datay,
 #' Summarizing an mgpr model
 #'
 #' \code{summary} method for class "\code{mgpr}".
-#' @param mgpr a \code{mgpr} model object, usually, a result of a call to \code{\link{mgpr}}.
+#' @param mgpr a \code{mgpr} model object, usually, 
+#' a result of a call to \code{\link{mgpr}}.
 #' @return A summary of the mgpr model will be printed to the R console.
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' summary(m)
@@ -573,14 +580,15 @@ summary.mgpr <- function(mgpr) {
 #'
 #' Predict using a Multivariate Gaussian process regression (mgpr) model. The
 #' function supports k-fold cross validation, new predictor variables, limiting
-#' predictions to positive scale, and generation of credible intervals.
+#' predictions to positive scale, and the construction of credible intervals.
 #' @param mgpr a \code{mgpr} model object, usually, a result of a call to
 #' \code{\link{mgpr}}.
 #' @param newdatax a data frame or an object coercible by as.data.frame to a
 #' data frame containing new predictor variables. Column names must match with
 #' the ones in the \code{mgpr} object. If NULL \code{datax} used in model
 #' training is used.
-#' @param credinter threshold of the credible intervals, e.g. \code{credinter=0.95}.
+#' @param credinter threshold of the credible intervals, 
+#' e.g. \code{credinter=0.95}.
 #' If NULL credible intervals are not returned.
 #' @param covout logical. Determines whether the covariance matrix is returned
 #' or not.
@@ -603,7 +611,7 @@ summary.mgpr <- function(mgpr) {
 #' @examples
 #' data(mgprdata)
 #' m <- mgpr(
-#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+#'   datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
 #'   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 #' )
 #' p <- predict(m, credinter = 0.95)
