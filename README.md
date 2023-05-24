@@ -8,7 +8,7 @@ To cite the package use `citation()` from within R:
 
 ```r
 citation("mgpr")
-# Varvia, P., Räty, J. and Packalen, P. (2022). mgpr....
+# Varvia, P., Räty, J. and Packalen, P. (2023). mgpr....
 ```   
 # Installation
 Install the *mgpr* from GitHub github using the R package *remotes*:
@@ -120,4 +120,4 @@ Validation and Parameter Selection. In Proceedings of the SilviLaser Conference 
 Räty, J., Varvia, P., Korhonen, L., Savolainen, P., Maltamo, M. and Packalen, P. (2022). A Comparison of Linear-Mode and Single-Photon Airborne LiDAR in Species-Specific Forest Inventories,
 IEEE Transactions on Geoscience and Remote Sensing, vol. 60, pp. 1-14.  https://doi.org/10.1109/TGRS.2021.3060670
 
-Varvia, P., Räty, J. and Packalen, P. (2022) mgpr: An R ......, TBA
+Varvia, P., Räty, J. and Packalen, P. (2023) mgpr: An R ......, TBA
