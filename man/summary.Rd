@@ -7,7 +7,8 @@
 summary(mgpr)
 }
 \arguments{
-\item{mgpr}{a \code{mgpr} model object, usually, a result of a call to \code{\link{mgpr}}.}
+\item{mgpr}{a \code{mgpr} model object, usually, 
+a result of a call to \code{\link{mgpr}}.}
 }
 \value{
 A summary of the mgpr model will be printed to the R console.
@@ -18,7 +19,7 @@ A summary of the mgpr model will be printed to the R console.
 \examples{
 data(mgprdata)
 m <- mgpr(
-  datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+  datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 )
 summary(m)

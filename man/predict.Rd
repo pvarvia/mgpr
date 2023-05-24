@@ -23,7 +23,8 @@ data frame containing new predictor variables. Column names must match with
 the ones in the \code{mgpr} object. If NULL \code{datax} used in model
 training is used.}
 
-\item{credinter}{threshold of the credible intervals, e.g. \code{credinter=0.95}.
+\item{credinter}{threshold of the credible intervals, 
+e.g. \code{credinter=0.95}.
 If NULL credible intervals are not returned.}
 
 \item{covout}{logical. Determines whether the covariance matrix is returned
@@ -46,12 +47,12 @@ is/are requested, the output will be a list.
 \description{
 Predict using a Multivariate Gaussian process regression (mgpr) model. The
 function supports k-fold cross validation, new predictor variables, limiting
-predictions to positive scale, and generation of credible intervals.
+predictions to positive scale, and the construction of credible intervals.
 }
 \examples{
 data(mgprdata)
 m <- mgpr(
-  datay = mgprdata[, 1:3], datax = mgprdata[, 4:40],
+  datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
   kernel = "matern32", kernpar = list(sigma = 1, corlen = 5, errorvar = 0.1)
 )
 p <- predict(m, credinter = 0.95)
