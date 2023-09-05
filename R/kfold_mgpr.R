@@ -307,8 +307,8 @@ kfold_mgpr <- function(mgpr, newdatax = NULL, credinter = NULL,
   } else {
     CredInter <- data.frame(t(lowerlimgp), t(upperlimgp))
     colnames(CredInter) <- c(
-      paste(colnames(xgp), "_lowerlimCI", sep = ""),
-      paste(colnames(xgp), "_upperlimCI", sep = "")
+      paste(colnames(xgp), "_lowlim", sep = ""),
+      paste(colnames(xgp), "_upplim", sep = "")
     )
     out <- list(pred = xgp, credinter = CredInter)
     if (covout) {
