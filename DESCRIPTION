@@ -12,6 +12,9 @@ Authors@R: c(person("Varvia", "Petri", email = "petri.varvia@uef.fi",
   person("Packalen", "Petteri", email = "petteri.packalen@uef.fi",
   role = c("aut")))
 URL: https://github.com/pvarvia/mgpr
-License: GPL-3
+License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

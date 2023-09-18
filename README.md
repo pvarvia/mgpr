@@ -23,6 +23,7 @@ remotes::install_github("pvarvia/mgpr", ref = "main")
 The *mgpr* function is used to fit a multivariate Gaussian process regression model.
 By default *mgpr* fits a GP with the Matérn 3/2 kernel/covariance function and training data average mean function. The kernel parameters (length scale, kernel variance and error variance) are optimized using the training data.
 ```r
+data(mgprdata)
 gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:39])
 ```
 The implemented covariance functions include Matérn 1/2, 3/2 (default), and 5/2, and squared exponential/rbf. Mean functions include zero, training data average (default) and a linear trend. These can be specified using the options *kernel* and *meanf*.
@@ -47,7 +48,10 @@ gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:39],
                            optlower = c(0.3, 3, 0.03), optupper = c(10, 50, 0.5), 
                            optcontrol = list(t0 = 10, nlimit = 50, r = 0.9)))
 ```
-Note that the *optcontrol* list can be used to overwrite the default parameters defined in the [optimization::optim_sa (ver. 1.0-9)](https://cran.r-project.org/web/packages/optimization/optimization.pdf) function.
+Note that the *optcontrol* list can be used to overwrite the default parameters defined in the [optimization::optim_sa (ver. 1.0-9)](https://cran.r-project.org/web/packages/optimization/optimization.pdf) function. The optimization can take some time, the *verbose* option can be used to show an iteration counter in the console.
+```r
+gp <- mgpr(datay = mgprdata[, 1:3], datax = mgprdata[, 4:39], verbose = T)
+```
 
 ### Predict method for an mgpr model
 The *predict* function is used to predict using a mgpr model. For example, let's split the demo data to separate train and test sets by taking every third row and train a default *mgpr* model using the training data.
