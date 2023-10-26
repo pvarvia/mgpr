@@ -1,14 +1,15 @@
 citHeader("To cite the mgpr library use:")
 
 citEntry(entry="Article",
-         author = "Petri Varvia and Janne R\U00E4ty and Petteri Packalen",
-         title = "mgpr: An R package for multivariate gaussian process regression",
+         author = "Varvia, Petri and R\"{a]ty, Janne and Packalen, Petteri",
+         title = "mgpr: An R package for multivariate Gaussian process regression",
          journal = "SoftwareX",
-         volume = "xxx",
-         year = "2022",
-         doi = "TBA",
+         volume = "24",
+		 pages = "101563",
+         year = "2023",
+		 doi = "https://doi.org/10.1016/j.softx.2023.101563",
          textVersion =
-           paste("Varvia, P., R\U00E4ty, J., Packalen, P. (2022).",
-           "mgpr: An R package for multivariate gaussian process regression",
-           "SoftwareX,. <doi:www.tba.com>.")
+           paste("Varvia, P., R\U00E4ty, J., Packalen, P. (2023).",
+           "mgpr: An R package for multivariate Gaussian process regression",
+           "SoftwareX, vol. 24, 101563. https://doi.org/10.1016/j.softx.2023.101563")
 )

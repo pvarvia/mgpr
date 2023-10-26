@@ -81,12 +81,15 @@
 #'   \code{YColName} \tab \tab column names of response variable(s). \cr
 #'   \code{XRowName} \tab \tab row names of predictor variables. \cr
 #' }
-#' @references Varvia, P., Lahivaara, T., Maltamo, M., Packalen, P. 
-#' and Seppanen, A. 2019.Gaussian process regression for forest attribute 
+#' @references Varvia, P., Lähivaara, T., Maltamo, M., Packalen, P. 
+#' and Seppänen, A. (2019). Gaussian process regression for forest attribute 
 #' estimation from airborne laser scanning data. 
 #' IEEE Transactions on Geoscience and Remote Sensing 57(6): 3361-3369.
+#' https://doi.org/10.1109/TGRS.2018.2883495
 #'
-#' R package article to appear.
+#' Varvia, P., Räty, J. and Packalen, P. (2023). mgpr: An R package for
+#' multivariate Gaussian process regression, SoftwareX 24: 101563.
+#' https://doi.org/10.1016/j.softx.2023.101563
 #'
 #' @examples
 #' data(mgprdata)
